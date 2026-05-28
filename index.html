@@ -655,21 +655,46 @@
       }
 
       .container > .card,
-      .container > .top-mini-bar {
+      .container > .top-mini-bar,
+      .container > details.card {
         order: 10;
       }
 
-      .eat-card {
+      .top-mini-bar {
         order: 1 !important;
+        justify-content: flex-start;
+      }
+
+      .eat-card {
+        order: 2 !important;
+      }
+
+      .container > .card:nth-of-type(3) {
+        order: 4 !important;
+      }
+
+      .container > .card:nth-of-type(4) {
+        order: 5 !important;
+      }
+
+      .container > details.card:nth-of-type(5) {
+        order: 6 !important;
+      }
+
+      .container > details.card:nth-of-type(6) {
+        order: 7 !important;
+      }
+
+      .container > .card:nth-of-type(7) {
+        order: 8 !important;
+      }
+
+      .container > .card:nth-of-type(8) {
+        order: 9 !important;
       }
 
       .today-decision-card {
         order: 3 !important;
-      }
-
-      .top-mini-bar {
-        order: 2 !important;
-        justify-content: flex-start;
       }
 
       .pwa-card {
@@ -710,6 +735,17 @@
       .weather-mini-button {
         flex: 1 1 100%;
         text-align: left;
+        order: 1;
+      }
+
+      #pwaInstallButton,
+      .top-mini-bar button[onclick="showPWAHelp()"] {
+        order: 2;
+      }
+
+      .top-mini-bar button[onclick="loadGuangzhouWeather()"],
+      .top-mini-bar .mini-info {
+        order: 3;
       }
 
       #resultName {
@@ -717,7 +753,15 @@
       }
 
       .restaurant-list {
-        grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+        grid-template-columns: 1fr;
+      }
+
+      .restaurant-row {
+        padding: 11px 12px;
+      }
+
+      .restaurant-row-meta {
+        font-size: 11px;
       }
     }
   </style>
@@ -1125,17 +1169,23 @@
         return;
       }
 
-      window.addEventListener("load", function() {
-        navigator.serviceWorker.register("./service-worker.js")
-          .then(function() {
-            if (!pwaStatus.innerText) {
-              pwaStatus.innerText = "PWA 基础能力已启用。";
-            }
-          })
-          .catch(function(error) {
-            console.warn("Service Worker 注册失败：", error);
-            pwaStatus.innerText = "PWA 安装文件还未完全配置。请确认 GitHub 仓库里已有 service-worker.js。";
-          });
+      window.addEventListener("load", async function() {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const registration of registrations) {
+            await registration.unregister();
+          }
+
+          if (window.caches) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map(key => caches.delete(key)));
+          }
+
+          pwaStatus.innerText = "已清理旧版页面缓存，手机端会显示最新页面。";
+        } catch (error) {
+          console.warn("旧缓存清理失败：", error);
+          pwaStatus.innerText = "旧缓存清理失败，但网页仍可正常使用。";
+        }
       });
     }
 
