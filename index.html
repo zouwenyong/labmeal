@@ -29,6 +29,8 @@
       max-width: 980px;
       margin: 0 auto;
       padding: 22px 16px 46px;
+      display: flex;
+      flex-direction: column;
     }
 
     h1 {
@@ -250,86 +252,93 @@
 
     .restaurant-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-      gap: 15px;
+      gap: 8px;
     }
 
-    .restaurant-item {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 5px 16px rgba(15, 23, 42, 0.06);
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-
-    .restaurant-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.09);
-    }
-
-    .restaurant-item img {
-      width: 100%;
-      height: 125px;
-      object-fit: cover;
-      display: block;
-      background: #f3f4f6;
-    }
-
-    .no-photo {
-      width: 100%;
-      height: 125px;
+    .restaurant-row {
       display: flex;
       align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 6px;
-      background: #f3f4f6;
-      color: #6b7280;
-      font-size: 13px;
-      font-weight: 700;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
     }
 
-    .no-photo .icon {
-      font-size: 28px;
+    .restaurant-row:hover {
+      background: #f8fafc;
+      border-color: #bfdbfe;
     }
 
-    .restaurant-name {
-      padding: 12px 10px 8px;
+    .restaurant-row-name {
       font-weight: 900;
-      text-align: center;
+      color: #111827;
       word-break: break-word;
+      line-height: 1.45;
     }
 
-    .restaurant-meta {
-      padding: 0 10px 8px;
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: #f3f4f6;
-      color: #4b5563;
+    .restaurant-row-meta {
+      color: #64748b;
       font-size: 12px;
       font-weight: 800;
+      white-space: nowrap;
     }
 
-    .restaurant-actions {
+    .restaurant-pagination {
       display: flex;
-      justify-content: center;
-      padding: 0 10px 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
     }
 
-    .restaurant-actions button {
+    .restaurant-pagination button {
       margin: 0;
-      padding: 7px 12px;
-      font-size: 12px;
+    }
+
+    .collapsible-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .collapsible-card summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px 20px;
+      font-size: 21px;
+      font-weight: 900;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .collapsible-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .collapsible-card summary::after {
+      content: "点开操作";
+      font-size: 13px;
+      font-weight: 800;
+      color: #2563eb;
+      background: #eff6ff;
+      padding: 5px 9px;
+      border-radius: 999px;
+    }
+
+    .collapsible-card[open] summary::after {
+      content: "收起";
+      color: #92400e;
+      background: #fef3c7;
+    }
+
+    .collapsible-body {
+      padding: 0 20px 20px;
+      border-top: 1px solid #eef2f7;
     }
 
     .history-item {
@@ -420,99 +429,42 @@
       line-height: 1.7;
     }
 
-    .top-dashboard {
-      position: static;
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 16px;
-      align-items: stretch;
-      margin-bottom: 20px;
-    }
-
-    .top-dashboard .card {
-      margin-bottom: 0;
-    }
-
-    .weather-card {
-      background: linear-gradient(135deg, #e0f2fe, #ffffff 55%, #fff7ed);
-      border: 1px solid #bae6fd;
-    }
-
-    .weather-main {
+    .top-mini-bar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 6px;
-    }
-
-    .weather-temp {
-      font-size: 30px;
-      font-weight: 900;
-      color: #0f172a;
-    }
-
-    .weather-desc {
-      color: #475569;
-      font-weight: 800;
-      line-height: 1.7;
-    }
-
-    .weather-advice {
-      margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.75);
-      color: #7c2d12;
-      line-height: 1.7;
-      font-weight: 800;
-    }
-
-    .quick-card {
-      background: linear-gradient(135deg, #f8fafc, #ffffff);
-      border: 1px solid #e2e8f0;
-    }
-
-    .quick-stat-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      justify-content: center;
       gap: 8px;
-      margin: 8px 0 10px;
+      margin-bottom: 12px;
     }
 
-    .quick-stat {
-      border-radius: 14px;
-      background: #f8fafc;
-      padding: 10px;
-      text-align: center;
-      border: 1px solid #e5e7eb;
-    }
-
-    .quick-stat-num {
-      font-size: 20px;
-      font-weight: 900;
-      color: #1e3a8a;
-    }
-
-    .quick-stat-label {
-      font-size: 12px;
-      color: #64748b;
-      font-weight: 800;
-      margin-top: 2px;
-    }
-
-    .quick-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .quick-actions button {
+    .top-mini-bar button,
+    .top-mini-bar .mini-info {
       margin: 0;
       padding: 9px 12px;
       font-size: 13px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .top-mini-bar .mini-info {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      color: #334155;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    }
+
+    .weather-mini-button {
+      background: #e0f2fe;
+      color: #075985;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .hidden-status {
+      display: none;
     }
 
     .vote-grid {
@@ -622,16 +574,142 @@
       border: 1px dashed #cbd5e1;
     }
 
-    @media (max-width: 760px) {
-      .top-dashboard {
-        position: static;
-        grid-template-columns: 1fr;
-      }
+    .map-result-list {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .poi-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #ffffff;
+    }
+
+    .poi-item input {
+      width: auto;
+      margin-top: 4px;
+    }
+
+    .poi-title {
+      font-weight: 900;
+      color: #111827;
+      line-height: 1.5;
+    }
+
+    .poi-meta {
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-top: 4px;
+    }
+
+    #mapPagination {
+      align-items: center;
+    }
+
+    #mapPageInfo {
+      margin-top: 10px;
+    }
+
+    .locked-box {
+      padding: 14px;
+      border-radius: 14px;
+      background: #fff7ed;
+      border: 1px dashed #fdba74;
+      margin-top: 12px;
+    }
+
+    .map-import-panel {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .key-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .key-row input {
+      flex: 1;
+    }
+
+    .key-row button {
+      margin: 0;
+      white-space: nowrap;
     }
 
     @media (max-width: 620px) {
+      .card:nth-of-type(7),
+      .card:nth-of-type(8) {
+        scroll-margin-top: 12px;
+      }
+
+      .container {
+        padding: 10px 10px 30px;
+      }
+
+      .container > .card,
+      .container > .top-mini-bar {
+        order: 10;
+      }
+
+      .eat-card {
+        order: 1 !important;
+      }
+
+      .today-decision-card {
+        order: 3 !important;
+      }
+
+      .top-mini-bar {
+        order: 2 !important;
+        justify-content: flex-start;
+      }
+
+      .pwa-card {
+        order: 99 !important;
+      }
+
       h1 {
         font-size: 28px;
+        margin: 4px 0 4px;
+      }
+
+      .desc {
+        display: none;
+      }
+
+      .card {
+        padding: 14px;
+        margin-bottom: 12px;
+        border-radius: 16px;
+      }
+
+      h2 {
+        font-size: 19px;
+        margin-bottom: 10px;
+      }
+
+      #resultBox {
+        min-height: 120px;
+        padding: 16px;
+      }
+
+      .top-mini-bar button,
+      .top-mini-bar .mini-info {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+
+      .weather-mini-button {
+        flex: 1 1 100%;
+        text-align: left;
       }
 
       #resultName {
@@ -651,51 +729,18 @@
       共享版：饭店名、饭店照片、菜单照片和推荐菜保存到 Supabase。你和同学打开同一个网页，就能看到同一份饭店库。
     </div>
 
-    <div class="card pwa-card">
-      <h2>安装到桌面</h2>
-      <div class="note">
-        可以把这个网页添加到手机或电脑桌面，之后像小程序一样打开。Chrome/Edge 可能会显示安装按钮；iPhone 可以用 Safari 的“分享 → 添加到主屏幕”。
-      </div>
-      <div class="pwa-install-row">
-        <button id="pwaInstallButton" class="btn-primary" onclick="installPWA()" style="display:none;">安装到桌面</button>
-        <button class="btn-gray" onclick="showPWAHelp()">查看安装方法</button>
-      </div>
-      <div id="pwaStatus" class="status"></div>
-    </div>
-
-    <div class="top-dashboard">
-      <div class="card weather-card">
-        <h2>广州今日天气</h2>
-        <div class="weather-main">
-          <div id="weatherContent" class="weather-desc">正在读取广州天气...</div>
-          <button class="btn-gray" onclick="loadGuangzhouWeather()">刷新天气</button>
-        </div>
-        <div id="weatherAdvice" class="weather-advice">天气建议加载中...</div>
-      </div>
-
-      <div class="card quick-card">
-        <h2>今日快捷面板</h2>
-        <div class="quick-stat-grid">
-          <div class="quick-stat">
-            <div id="quickRestaurantCount" class="quick-stat-num">--</div>
-            <div class="quick-stat-label">饭店</div>
-          </div>
-          <div class="quick-stat">
-            <div id="quickHistoryCount" class="quick-stat-num">--</div>
-            <div class="quick-stat-label">历史</div>
-          </div>
-          <div class="quick-stat">
-            <div id="quickVoteState" class="quick-stat-num">--</div>
-            <div class="quick-stat-label">投票</div>
-          </div>
-        </div>
-        <div class="quick-actions">
-          <button class="btn-primary" onclick="pickRestaurant()">随机一下</button>
-          <button class="btn-success" onclick="startVoteCandidates()">生成候选</button>
-          <button class="btn-gray" onclick="refreshAllData()">刷新全部</button>
-        </div>
-        <div class="note">天气、随机、投票和数据刷新放在同一行，打开网页后能更快操作。</div>
-      </div>
+    <div class="top-mini-bar">
+      <button id="pwaInstallButton" class="btn-primary" onclick="installPWA()" style="display:none;">安装到桌面</button>
+      <button class="btn-gray" onclick="showPWAHelp()">安装到桌面</button>
+      <button class="weather-mini-button" onclick="showWeatherDetail()">
+        <span id="weatherContent">广州天气加载中...</span>
+      </button>
+      <button class="btn-gray" onclick="loadGuangzhouWeather()">刷新天气</button>
+      <span class="mini-info">饭店 <span id="quickRestaurantCount">--</span></span>
+      <span class="mini-info">投票 <span id="quickVoteState">--</span></span>
+      <span class="hidden-status" id="quickHistoryCount">--</span>
+      <span class="hidden-status" id="weatherAdvice">天气建议加载中...</span>
+      <span class="hidden-status" id="pwaStatus"></span>
     </div>
 
     <div class="card today-decision-card">
@@ -703,7 +748,7 @@
       <div id="todayDecisionBox" class="today-decision-content">今天还没有确认最终吃哪家。</div>
     </div>
 
-    <div class="card">
+    <div class="card eat-card">
       <h2>1. 今天吃什么</h2>
       <div id="resultBox">
         <div>点击下面按钮开始随机推荐</div>
@@ -742,93 +787,149 @@
     </div>
 
     <div class="card">
-      <h2>3. 添加 / 更新饭店</h2>
+      <h2>3. 已保存的饭店</h2>
+      <div class="search-row">
+        <label>搜索饭店</label>
+        <input type="text" id="restaurantSearchInput" placeholder="输入饭店名、推荐菜、天气标签、地址，例如：拉面、有空调、清淡、五山" />
+      </div>
+      <div id="restaurantList" class="restaurant-list"></div>
+      <div class="restaurant-pagination" id="restaurantPagination" style="display:none;">
+        <button class="btn-gray" onclick="prevRestaurantPage()">上一页</button>
+        <button class="btn-gray" onclick="nextRestaurantPage()">下一页</button>
+        <span class="mini-info" id="restaurantPageInfo">第 1 页</span>
+      </div>
+    </div>
 
-      <label>饭店名 <span style="color:#dc2626;">*</span></label>
-      <input type="text" id="restaurantName" placeholder="例如：兰州拉面" />
+    <details class="card collapsible-card">
+      <summary>4. 添加 / 更新饭店</summary>
+      <div class="collapsible-body">
+        <label>饭店名 <span style="color:#dc2626;">*</span></label>
+        <input type="text" id="restaurantName" placeholder="例如：兰州拉面" />
 
-      <div class="option-box">
-        <label>饭店照片，可选</label>
-        <input type="file" id="photoInput" accept="image/*" />
+        <div class="option-box">
+          <label>饭店照片，可选</label>
+          <input type="file" id="photoInput" accept="image/*" />
 
-        <div class="button-row">
-          <button class="btn-primary" onclick="openCamera()">打开摄像头拍饭店</button>
-          <button class="btn-warning" onclick="recognizeText()">从饭店照片识别店名</button>
-          <button class="btn-gray" onclick="clearCurrentPhoto()">清除饭店照片</button>
+          <div class="button-row">
+            <button class="btn-primary" onclick="openCamera()">打开摄像头拍饭店</button>
+            <button class="btn-warning" onclick="recognizeText()">从饭店照片识别店名</button>
+            <button class="btn-gray" onclick="clearCurrentPhoto()">清除饭店照片</button>
+          </div>
+
+          <div id="cameraBox" class="camera-box">
+            <video id="cameraVideo" autoplay playsinline></video>
+            <canvas id="captureCanvas" style="display:none;"></canvas>
+            <div class="camera-actions">
+              <button class="btn-success" onclick="capturePhoto()">拍饭店照片</button>
+              <button class="btn-gray" onclick="closeCamera()">关闭摄像头</button>
+            </div>
+          </div>
+
+          <img id="previewImage" class="preview-img" alt="饭店照片预览" />
+          <div id="ocrStatus"></div>
         </div>
 
-        <div id="cameraBox" class="camera-box">
-          <video id="cameraVideo" autoplay playsinline></video>
-          <canvas id="captureCanvas" style="display:none;"></canvas>
-          <div class="camera-actions">
-            <button class="btn-success" onclick="capturePhoto()">拍饭店照片</button>
-            <button class="btn-gray" onclick="closeCamera()">关闭摄像头</button>
+        <div class="option-box">
+          <label>菜单照片，可选</label>
+          <input type="file" id="menuPhotoInput" accept="image/*" />
+          <img id="menuPreviewImage" class="preview-img" alt="菜单照片预览" />
+          <div class="button-row">
+            <button class="btn-gray" onclick="clearMenuPhoto()">清除菜单照片</button>
           </div>
         </div>
 
-        <img id="previewImage" class="preview-img" alt="饭店照片预览" />
-        <div id="ocrStatus"></div>
-      </div>
+        <label>推荐菜，可选</label>
+        <textarea id="recommendedDishes" placeholder="例如：牛肉拉面、炒刀削面、鸡蛋炒饭。也可以写：不要点麻辣香锅，太咸。"></textarea>
 
-      <div class="option-box">
-        <label>菜单照片，可选</label>
-        <input type="file" id="menuPhotoInput" accept="image/*" />
-        <img id="menuPreviewImage" class="preview-img" alt="菜单照片预览" />
-        <div class="button-row">
-          <button class="btn-gray" onclick="clearMenuPhoto()">清除菜单照片</button>
+        <label>天气标签，可选</label>
+        <input type="text" id="weatherTags" placeholder="例如：热天不推荐、冷天推荐、雨天推荐、有空调、距离近、清淡" />
+
+        <div class="note">
+          可以只保存饭店名；也可以补充饭店照片、菜单照片、推荐菜和天气标签。输入同名饭店时，会进入更新逻辑。
         </div>
+
+        <div class="button-row">
+          <button class="btn-success" onclick="saveRestaurant()">保存饭店</button>
+          <button class="btn-gray" onclick="loadRestaurants()">刷新饭店库</button>
+          <button class="btn-warning" onclick="cleanupUnusedPhotos()">清理无用照片</button>
+        </div>
+        <div id="globalStatus" class="status"></div>
       </div>
+    </details>
 
-      <label>推荐菜，可选</label>
-      <textarea id="recommendedDishes" placeholder="例如：牛肉拉面、炒刀削面、鸡蛋炒饭。也可以写：不要点麻辣香锅，太咸。"></textarea>
-
-      <label>天气标签，可选</label>
-      <input type="text" id="weatherTags" placeholder="例如：热天不推荐、冷天推荐、雨天推荐、有空调、距离近、清淡" />
-
-      <div class="note">
-        可以只保存饭店名；也可以补充饭店照片、菜单照片、推荐菜和天气标签。输入同名饭店时，会进入更新逻辑。
-      </div>
-
-      <div class="button-row">
-        <button class="btn-success" onclick="saveRestaurant()">保存饭店</button>
-        <button class="btn-gray" onclick="loadRestaurants()">刷新饭店库</button>
-        <button class="btn-warning" onclick="cleanupUnusedPhotos()">清理无用照片</button>
-      </div>
-      <div id="globalStatus" class="status"></div>
-    </div>
-
-    <div class="card">
-      <h2>4. 批量导入饭店</h2>
-
-      <label>批量饭店列表</label>
-      <textarea id="bulkImportText" placeholder="支持三种格式：
+    <details class="card collapsible-card">
+      <summary>5. 批量导入饭店</summary>
+      <div class="collapsible-body">
+        <label>批量饭店列表</label>
+        <textarea id="bulkImportText" placeholder="支持三种格式：
 兰州拉面
 黄焖鸡米饭 | 黄焖鸡、土豆牛腩
 麻辣烫 | 宽粉、牛肉丸、少放辣 | 热天不推荐、冷天推荐"></textarea>
 
+        <div class="note">
+          每行一家饭店。格式：饭店名 | 推荐菜 | 天气标签。后两项都可以不写。
+          已有饭店不会重复添加；如果已有饭店这一行写了推荐菜或天气标签，会更新对应信息。
+        </div>
+
+        <div class="button-row">
+          <button class="btn-success" onclick="bulkImportRestaurants()">批量导入</button>
+          <button class="btn-gray" onclick="fillBulkImportExample()">填入示例</button>
+          <button class="btn-gray" onclick="clearBulkImportText()">清空输入</button>
+        </div>
+      </div>
+    </details>
+
+    <div class="card">
+      <h2>6. 从地图导入饭店</h2>
       <div class="note">
-        每行一家饭店。格式：饭店名 | 推荐菜 | 天气标签。后两项都可以不写。
-        已有饭店不会重复添加；如果已有饭店这一行写了推荐菜或天气标签，会更新对应信息。
+        地图导入属于管理功能，需要先输入密码。高德 Key 默认隐藏，解锁后才能填写或查看；Key 只保存在当前浏览器，不会写入 GitHub 代码。搜索结果每页显示 25 家，可以导入当前页选中的饭店，也可以一键导入该条件下搜索到的全部饭店。
       </div>
 
-      <div class="button-row">
-        <button class="btn-success" onclick="bulkImportRestaurants()">批量导入</button>
-        <button class="btn-gray" onclick="fillBulkImportExample()">填入示例</button>
-        <button class="btn-gray" onclick="clearBulkImportText()">清空输入</button>
+      <div class="locked-box">
+        <label>地图导入密码</label>
+        <input type="password" id="mapPasswordInput" placeholder="请输入地图导入密码" />
+        <div class="button-row">
+          <button class="btn-primary" onclick="unlockMapImport()">解锁地图导入</button>
+          <button class="btn-gray" onclick="lockMapImport()">锁定</button>
+        </div>
+        <div id="mapLockStatus" class="status">地图导入当前已锁定。</div>
+      </div>
+
+      <div id="mapImportPanel" class="map-import-panel">
+        <label>高德 Web服务 Key</label>
+        <div class="key-row">
+          <input type="password" id="amapKeyInput" placeholder="粘贴你的高德 Web服务 Key" />
+          <button class="btn-gray" onclick="toggleAmapKeyVisibility()">显示/隐藏</button>
+        </div>
+
+        <label>实验室地址</label>
+        <input type="text" id="mapAddressInput" placeholder="例如：广东省广州市天河区五山路华南理工大学" />
+
+        <label>搜索关键词，可选</label>
+        <input type="text" id="mapKeywordInput" placeholder="可以不填。不填时会按“餐饮服务”类别搜索附近饭店；也可以填：拉面、麻辣烫、黄焖鸡" />
+
+        <label>搜索半径，单位米</label>
+        <input type="text" id="mapRadiusInput" placeholder="例如：1000" value="1000" />
+
+        <div class="button-row">
+          <button class="btn-primary" onclick="searchMapRestaurants()">搜索附近饭店</button>
+          <button class="btn-success" onclick="importSelectedMapRestaurants()">导入当前页选中</button>
+          <button class="btn-warning" onclick="importAllMapRestaurants()">导入搜索到的全部</button>
+          <button class="btn-gray" onclick="selectAllMapResults(true)">全选</button>
+          <button class="btn-gray" onclick="selectAllMapResults(false)">全不选</button>
+        </div>
+        <div id="mapStatus" class="status"></div>
+        <div class="button-row" id="mapPagination" style="display:none;">
+          <button class="btn-gray" onclick="prevMapPage()">上一页</button>
+          <button class="btn-gray" onclick="nextMapPage()">下一页</button>
+          <span class="mini-info" id="mapPageInfo">第 1 页</span>
+        </div>
+        <div id="mapResultList" class="map-result-list"></div>
       </div>
     </div>
 
     <div class="card">
-      <h2>5. 已保存的饭店</h2>
-      <div class="search-row">
-        <label>搜索饭店</label>
-        <input type="text" id="restaurantSearchInput" placeholder="输入饭店名、推荐菜或天气标签，例如：拉面、有空调、清淡" />
-      </div>
-      <div id="restaurantList" class="restaurant-list"></div>
-    </div>
-
-    <div class="card">
-      <h2>6. 历史记录</h2>
+      <h2>7. 历史记录</h2>
       <div id="historyList"></div>
       <button class="btn-gray" onclick="loadHistory()">刷新历史记录</button>
       <button class="btn-danger" onclick="clearHistory()">清空历史记录</button>
@@ -849,9 +950,17 @@
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const PHOTO_BUCKET = "restaurant-photos";
+    const MAP_IMPORT_PASSWORD = "123456";
 
     let restaurants = [];
     let historyData = [];
+    let restaurantCurrentPage = 1;
+    const RESTAURANT_PAGE_SIZE = 10;
+    let mapSearchResults = [];
+    let mapImportUnlocked = false;
+    let mapCurrentPage = 1;
+    let mapHasNextPage = false;
+    let mapLastSearchParams = null;
     let currentVoteCandidates = [];
     let currentPick = null;
     let currentWeather = {
@@ -878,9 +987,22 @@
     const recommendedDishesInput = document.getElementById("recommendedDishes");
     const weatherTagsInput = document.getElementById("weatherTags");
     const bulkImportText = document.getElementById("bulkImportText");
+    const mapPasswordInput = document.getElementById("mapPasswordInput");
+    const mapImportPanel = document.getElementById("mapImportPanel");
+    const mapLockStatus = document.getElementById("mapLockStatus");
+    const amapKeyInput = document.getElementById("amapKeyInput");
+    const mapAddressInput = document.getElementById("mapAddressInput");
+    const mapKeywordInput = document.getElementById("mapKeywordInput");
+    const mapRadiusInput = document.getElementById("mapRadiusInput");
+    const mapStatus = document.getElementById("mapStatus");
+    const mapPagination = document.getElementById("mapPagination");
+    const mapPageInfo = document.getElementById("mapPageInfo");
+    const mapResultList = document.getElementById("mapResultList");
     const ocrStatus = document.getElementById("ocrStatus");
     const globalStatus = document.getElementById("globalStatus");
     const restaurantList = document.getElementById("restaurantList");
+    const restaurantPagination = document.getElementById("restaurantPagination");
+    const restaurantPageInfo = document.getElementById("restaurantPageInfo");
     const historyList = document.getElementById("historyList");
     const resultName = document.getElementById("resultName");
     const resultPhoto = document.getElementById("resultPhoto");
@@ -917,6 +1039,7 @@
     });
 
     restaurantSearchInput.addEventListener("input", function() {
+      restaurantCurrentPage = 1;
       renderRestaurants();
     });
 
@@ -979,13 +1102,21 @@
     }
 
     function showPWAHelp() {
-      alert(
-        "安装方法：\n\n" +
-        "电脑 Chrome / Edge：地址栏右侧如果出现安装图标，点击安装；或点击页面里的“安装到桌面”。\n\n" +
-        "安卓 Chrome：打开网页后，点击浏览器菜单，选择“安装应用”或“添加到主屏幕”。\n\n" +
-        "iPhone Safari：点击底部分享按钮，选择“添加到主屏幕”。\n\n" +
+      const nl = String.fromCharCode(10);
+      alert([
+        "安装方法：",
+        "电脑 Chrome / Edge：地址栏右侧如果出现安装图标，点击安装；或点击页面里的“安装到桌面”。",
+        "安卓 Chrome：打开网页后，点击浏览器菜单，选择“安装应用”或“添加到主屏幕”。",
+        "iPhone Safari：点击底部分享按钮，选择“添加到主屏幕”。",
         "注意：需要网页通过 HTTPS 打开，GitHub Pages 链接满足这个条件。"
-      );
+      ].join(nl + nl));
+    }
+
+    function showWeatherDetail() {
+      const nl = String.fromCharCode(10);
+      const weatherText = weatherContent.innerText || "广州天气暂未加载";
+      const adviceText = weatherAdvice.innerText || "暂无天气建议";
+      alert(weatherText + nl + nl + "饮食建议：" + nl + adviceText);
     }
 
     function registerServiceWorker() {
@@ -1190,7 +1321,7 @@
     async function deletePhotoFromStorage(photoUrl) {
       const filePath = getStoragePathFromPublicUrl(photoUrl);
       if (!filePath) {
-        throw new Error("无法从 photo_url 解析出 Storage 文件路径");
+        return "";
       }
 
       const { error } = await supabaseClient.storage
@@ -1338,22 +1469,50 @@
       setStatus("已清除当前菜单照片。 ");
     }
 
+    function normalizeRestaurantRow(row) {
+      return {
+        id: row.id,
+        name: row.name,
+        photo_url: row.photo_url || null,
+        menu_photo_url: row.menu_photo_url || null,
+        recommended_dishes: row.recommended_dishes || null,
+        weather_tags: row.weather_tags || null,
+        address: row.address || null,
+        map_poi_id: row.map_poi_id || null,
+        map_location: row.map_location || null,
+        map_type: row.map_type || null,
+        distance_m: row.distance_m || null,
+        map_tel: row.map_tel || null,
+        map_rating: row.map_rating || null,
+        map_cost: row.map_cost || null,
+        map_business_area: row.map_business_area || null,
+        created_at: row.created_at
+      };
+    }
+
     async function loadRestaurants() {
       try {
         setStatus("正在从云端读取饭店库...");
         const { data, error } = await supabaseClient
           .from("restaurants")
-          .select("id, name, photo_url, menu_photo_url, recommended_dishes, weather_tags, created_at")
+          .select("id, name, photo_url, menu_photo_url, recommended_dishes, weather_tags, address, map_poi_id, map_location, map_type, distance_m, map_tel, map_rating, map_cost, map_business_area, created_at")
           .order("created_at", { ascending: false });
 
         if (error) throw error;
-        restaurants = data || [];
+        restaurants = (data || []).map(normalizeRestaurantRow);
         renderRestaurants();
         updateQuickStats();
         setStatus("饭店库已刷新。当前共有 " + restaurants.length + " 家饭店。");
       } catch (error) {
         console.error(error);
-        restaurantList.innerHTML = "<div class='empty'>读取饭店库失败。请检查 Supabase 表字段是否已更新。</div>";
+
+        if (String(error.message || "").includes("does not exist")) {
+          restaurantList.innerHTML = "<div class='empty'>饭店库读取失败：数据库字段还没同步。请在 Supabase SQL Editor 运行地图字段 SQL，然后刷新页面。</div>";
+          setStatus("读取饭店库失败：缺少数据库字段。请运行 address、map_poi_id、map_location、map_type、distance_m 相关 SQL。原始错误：" + error.message);
+          return;
+        }
+
+        restaurantList.innerHTML = "<div class='empty'>读取饭店库失败，请刷新页面或检查 Supabase 设置。</div>";
         setStatus("读取饭店库失败：" + error.message);
       }
     }
@@ -1362,41 +1521,72 @@
       return String(value || "").toLowerCase().trim();
     }
 
-    function renderRestaurants() {
-      if (restaurants.length === 0) {
-        restaurantList.innerHTML = "<div class='empty'>还没有保存任何饭店。你可以先只输入饭店名保存一个，或者使用上面的批量导入。</div>";
-        return;
-      }
-
+    function getFilteredRestaurants() {
       const keyword = normalizeText(restaurantSearchInput.value);
-      const filtered = restaurants.filter(item => {
+      return restaurants.filter(item => {
         if (!keyword) return true;
-        const combined = [item.name, item.recommended_dishes, item.weather_tags].map(normalizeText).join(" ");
+        const combined = [item.name, item.recommended_dishes, item.weather_tags, item.address, item.map_type, item.map_tel, item.map_business_area].map(normalizeText).join(" ");
         return combined.includes(keyword);
       });
+    }
 
-      if (filtered.length === 0) {
-        restaurantList.innerHTML = "<div class='empty'>没有搜索到匹配的饭店。</div>";
+    function renderRestaurants() {
+      if (restaurants.length === 0) {
+        restaurantList.innerHTML = "<div class='empty'>还没有保存任何饭店。你可以先使用地图导入，或者点开“添加 / 更新饭店”手动添加。</div>";
+        restaurantPagination.style.display = "none";
         return;
       }
 
-      restaurantList.innerHTML = filtered.map(item => `
-        <div class="restaurant-item" onclick="showRestaurantDetail('${item.id}')">
-          ${item.photo_url
-            ? `<img src="${item.photo_url}" alt="${escapeHtml(item.name)}">`
-            : `<div class="no-photo"><div class="icon">🍽️</div><div>暂无照片</div></div>`
-          }
-          <div class="restaurant-name">${escapeHtml(item.name)}</div>
-          <div class="restaurant-meta">
-            ${item.menu_photo_url ? `<span class="badge">有菜单</span>` : ""}
-            ${item.recommended_dishes ? `<span class="badge">有推荐菜</span>` : ""}
-            ${item.weather_tags ? `<span class="badge">天气标签</span>` : ""}
+      const filtered = getFilteredRestaurants();
+      if (filtered.length === 0) {
+        restaurantList.innerHTML = "<div class='empty'>没有搜索到匹配的饭店。</div>";
+        restaurantPagination.style.display = "none";
+        return;
+      }
+
+      const totalPages = Math.max(1, Math.ceil(filtered.length / RESTAURANT_PAGE_SIZE));
+      if (restaurantCurrentPage > totalPages) restaurantCurrentPage = totalPages;
+      if (restaurantCurrentPage < 1) restaurantCurrentPage = 1;
+
+      const start = (restaurantCurrentPage - 1) * RESTAURANT_PAGE_SIZE;
+      const pageItems = filtered.slice(start, start + RESTAURANT_PAGE_SIZE);
+
+      restaurantList.innerHTML = pageItems.map((item, index) => {
+        const number = start + index + 1;
+        const metaParts = [];
+        if (item.recommended_dishes) metaParts.push("推荐菜");
+        if (item.weather_tags) metaParts.push("天气标签");
+        if (item.distance_m) metaParts.push(item.distance_m + "m");
+        return `
+          <div class="restaurant-row" onclick="showRestaurantDetail('${item.id}')">
+            <div class="restaurant-row-name">${number}. ${escapeHtml(item.name)}</div>
+            <div class="restaurant-row-meta">${metaParts.length ? escapeHtml(metaParts.join("｜")) : "详情"}</div>
           </div>
-          <div class="restaurant-actions">
-            <button class="btn-danger" onclick="deleteRestaurant(event, '${item.id}')">删除</button>
-          </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
+
+      restaurantPagination.style.display = "flex";
+      restaurantPageInfo.innerText = "第 " + restaurantCurrentPage + " / " + totalPages + " 页，共 " + filtered.length + " 家，每页 10 家";
+    }
+
+    function prevRestaurantPage() {
+      if (restaurantCurrentPage <= 1) {
+        alert("已经是第一页了。 ");
+        return;
+      }
+      restaurantCurrentPage -= 1;
+      renderRestaurants();
+    }
+
+    function nextRestaurantPage() {
+      const filtered = getFilteredRestaurants();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / RESTAURANT_PAGE_SIZE));
+      if (restaurantCurrentPage >= totalPages) {
+        alert("已经是最后一页了。 ");
+        return;
+      }
+      restaurantCurrentPage += 1;
+      renderRestaurants();
     }
 
     function parseBulkImportText(rawText) {
@@ -1538,6 +1728,529 @@
       setStatus("批量导入输入框已清空。");
     }
 
+    function isMapImportUnlocked() {
+      if (mapImportUnlocked) return true;
+      alert("请先输入密码并解锁地图导入。 ");
+      return false;
+    }
+
+    function unlockMapImport() {
+      const inputPassword = mapPasswordInput.value.trim();
+      if (inputPassword !== MAP_IMPORT_PASSWORD) {
+        alert("地图导入密码不正确。 ");
+        mapLockStatus.innerText = "密码错误，地图导入仍然锁定。";
+        return;
+      }
+
+      mapImportUnlocked = true;
+      mapImportPanel.style.display = "block";
+      mapLockStatus.innerText = "地图导入已解锁。高德 Key 已可填写/查看。";
+      initMapImportSettings();
+    }
+
+    function lockMapImport() {
+      mapImportUnlocked = false;
+      mapPasswordInput.value = "";
+      amapKeyInput.value = "";
+      amapKeyInput.type = "password";
+      mapImportPanel.style.display = "none";
+      mapLockStatus.innerText = "地图导入当前已锁定。";
+      mapStatus.innerText = "";
+      mapResultList.innerHTML = "";
+    }
+
+    function toggleAmapKeyVisibility() {
+      if (!isMapImportUnlocked()) return;
+      amapKeyInput.type = amapKeyInput.type === "password" ? "text" : "password";
+    }
+
+    function saveMapSettings() {
+      localStorage.setItem("labmeal_amap_key", amapKeyInput.value.trim());
+      localStorage.setItem("labmeal_map_address", mapAddressInput.value.trim());
+    }
+
+    function initMapImportSettings() {
+      if (!mapImportUnlocked) return;
+      amapKeyInput.value = localStorage.getItem("labmeal_amap_key") || "";
+      mapAddressInput.value = localStorage.getItem("labmeal_map_address") || "";
+    }
+
+    function amapJsonp(params) {
+      return new Promise((resolve, reject) => {
+        const callbackName = "amapCallback_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+        const url = new URL("https://restapi.amap.com/v3/place/around");
+
+        Object.keys(params).forEach(key => {
+          if (params[key] !== undefined && params[key] !== null && String(params[key]).trim() !== "") {
+            url.searchParams.set(key, params[key]);
+          }
+        });
+        url.searchParams.set("output", "json");
+        url.searchParams.set("callback", callbackName);
+
+        const script = document.createElement("script");
+        const timer = setTimeout(() => {
+          cleanup();
+          reject(new Error("高德地图请求超时"));
+        }, 12000);
+
+        function cleanup() {
+          clearTimeout(timer);
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        window[callbackName] = data => {
+          cleanup();
+          resolve(data);
+        };
+
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("高德地图脚本加载失败"));
+        };
+
+        script.src = url.toString();
+        document.body.appendChild(script);
+      });
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function amapAroundWithRetry(params, label) {
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        const data = await amapJsonp(params);
+        if (data.status === "1") return data;
+
+        const info = String(data.info || "");
+        const isRateLimit = info.includes("CUQPS") || info.includes("EXCEEDED") || info.includes("LIMIT");
+        if (isRateLimit) {
+          mapStatus.innerText = (label || "地图请求") + "触发高德限流，等待后重试 " + attempt + " / 3...";
+          await sleep(1800 * attempt);
+          continue;
+        }
+
+        throw new Error(info || "高德地图返回失败");
+      }
+
+      throw new Error("高德接口请求过快，已触发限流。请稍等 1 分钟后再试，或者使用“导入当前页选中”。");
+    }
+
+    function amapGeocodeJsonp(params) {
+      return new Promise((resolve, reject) => {
+        const callbackName = "amapGeoCallback_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+        const url = new URL("https://restapi.amap.com/v3/geocode/geo");
+
+        Object.keys(params).forEach(key => {
+          if (params[key]) url.searchParams.set(key, params[key]);
+        });
+        url.searchParams.set("output", "json");
+        url.searchParams.set("callback", callbackName);
+
+        const script = document.createElement("script");
+        const timer = setTimeout(() => {
+          cleanup();
+          reject(new Error("地址解析请求超时"));
+        }, 12000);
+
+        function cleanup() {
+          clearTimeout(timer);
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        window[callbackName] = data => {
+          cleanup();
+          resolve(data);
+        };
+
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("地址解析脚本加载失败"));
+        };
+
+        script.src = url.toString();
+        document.body.appendChild(script);
+      });
+    }
+
+    async function resolveMapLocation(key, address) {
+      if (!address) {
+        throw new Error("请填写实验室地址，例如：广东省广州市天河区五山路华南理工大学");
+      }
+
+      mapStatus.innerText = "正在把地址解析成经纬度...";
+      const data = await amapGeocodeJsonp({
+        key,
+        address,
+        city: "广州"
+      });
+
+      if (data.status !== "1") {
+        throw new Error(data.info || "地址解析失败");
+      }
+
+      const first = data.geocodes && data.geocodes[0];
+      if (!first || !first.location) {
+        throw new Error("没有从这个地址解析到经纬度，请把实验室地址写得更完整");
+      }
+
+      return first.location;
+    }
+
+    function normalizePoiText(value) {
+      if (Array.isArray(value)) return value.join("、");
+      return String(value || "").trim();
+    }
+
+    function isValidLocationText(value) {
+      const parts = String(value || "").split(",").map(part => Number(part.trim()));
+      return parts.length === 2 && Number.isFinite(parts[0]) && Number.isFinite(parts[1]);
+    }
+
+    async function searchMapRestaurants() {
+      if (!isMapImportUnlocked()) return;
+      const key = amapKeyInput.value.trim();
+      const address = mapAddressInput.value.trim();
+      const keywords = mapKeywordInput.value.trim();
+      const radius = mapRadiusInput.value.trim() || "1000";
+
+      if (!key) {
+        alert("请先填写高德 Web服务 Key。 ");
+        return;
+      }
+
+      try {
+        saveMapSettings();
+        mapResultList.innerHTML = "";
+        mapPagination.style.display = "none";
+        const location = await resolveMapLocation(key, address);
+
+        mapLastSearchParams = { key, location, keywords, radius };
+        mapCurrentPage = 1;
+        await loadMapPage(1);
+      } catch (error) {
+        console.error(error);
+        mapStatus.innerText = "地图搜索失败：" + error.message;
+        alert("地图搜索失败：" + error.message);
+      }
+    }
+
+    async function loadMapPage(page) {
+      if (!mapLastSearchParams) {
+        alert("请先搜索附近饭店。 ");
+        return;
+      }
+
+      try {
+        mapStatus.innerText = "正在搜索第 " + page + " 页，每页最多 25 条...";
+
+        const data = await amapAroundWithRetry({
+          key: mapLastSearchParams.key,
+          location: mapLastSearchParams.location,
+          keywords: mapLastSearchParams.keywords,
+          types: "050000",
+          radius: mapLastSearchParams.radius,
+          offset: "25",
+          page: String(page),
+          extensions: "all"
+        }, "第 " + page + " 页搜索");
+
+        const pois = data.pois || [];
+        if (pois.length === 0 && page > 1) {
+          mapHasNextPage = false;
+          renderMapPagination();
+          mapStatus.innerText = "已经到最后一页，所有可搜索饭店已经显示完成。";
+          alert("所有饭店已经搜索完成，没有下一页了。 ");
+          return;
+        }
+
+        const poiMap = new Map();
+        pois.forEach(poi => {
+          const firstPhoto = Array.isArray(poi.photos) && poi.photos.length ? normalizePoiText(poi.photos[0].url) : "";
+          const bizExt = poi.biz_ext || {};
+          const normalized = {
+            id: normalizePoiText(poi.id),
+            name: normalizePoiText(poi.name),
+            address: normalizePoiText(poi.address),
+            location: normalizePoiText(poi.location),
+            type: normalizePoiText(poi.type),
+            distance: Number(poi.distance || 0),
+            tel: normalizePoiText(poi.tel),
+            rating: normalizePoiText(bizExt.rating),
+            cost: normalizePoiText(bizExt.cost),
+            business_area: normalizePoiText(poi.business_area),
+            photo_url: firstPhoto
+          };
+
+          if (!normalized.name) return;
+          const uniqueKey = normalized.id || (normalized.name + "|" + normalized.address);
+          if (!poiMap.has(uniqueKey)) {
+            poiMap.set(uniqueKey, normalized);
+          }
+        });
+
+        mapSearchResults = Array.from(poiMap.values());
+        mapCurrentPage = page;
+        mapHasNextPage = pois.length === 25;
+
+        renderMapResults();
+        renderMapPagination();
+        if (mapHasNextPage) {
+          mapStatus.innerText = "第 " + mapCurrentPage + " 页搜索完成，当前页显示 " + mapSearchResults.length + " 家饭店。可能还有下一页。";
+        } else {
+          mapStatus.innerText = "第 " + mapCurrentPage + " 页搜索完成，当前页显示 " + mapSearchResults.length + " 家饭店。所有可搜索饭店已显示完成。";
+        }
+      } catch (error) {
+        console.error(error);
+        mapStatus.innerText = "地图搜索失败：" + error.message;
+        alert("地图搜索失败：" + error.message);
+      }
+    }
+
+    function renderMapPagination() {
+      if (!mapLastSearchParams) {
+        mapPagination.style.display = "none";
+        return;
+      }
+      mapPagination.style.display = "flex";
+      mapPageInfo.innerText = "第 " + mapCurrentPage + " 页" + (mapHasNextPage ? "，可能还有下一页" : "，全部搜索完成");
+    }
+
+    function prevMapPage() {
+      if (!isMapImportUnlocked()) return;
+      if (mapCurrentPage <= 1) {
+        alert("已经是第一页了。 ");
+        return;
+      }
+      loadMapPage(mapCurrentPage - 1);
+    }
+
+    function nextMapPage() {
+      if (!isMapImportUnlocked()) return;
+      if (!mapHasNextPage) {
+        alert("已经是最后一页了。 ");
+        return;
+      }
+      loadMapPage(mapCurrentPage + 1);
+    }
+
+    function renderMapResults() {
+      if (!mapSearchResults.length) {
+        mapResultList.innerHTML = "<div class='empty'>暂无地图搜索结果。</div>";
+        return;
+      }
+
+      mapResultList.innerHTML = mapSearchResults.map((poi, index) => {
+        const distanceText = poi.distance ? escapeHtml(poi.distance) + "m｜" : "";
+        return "<label class='poi-item'>" +
+          "<input type='checkbox' class='map-poi-checkbox' value='" + index + "' checked />" +
+          "<div>" +
+            "<div class='poi-title'>" + escapeHtml(poi.name) + "</div>" +
+            "<div class='poi-meta'>" + distanceText + escapeHtml(poi.type || "餐饮服务") + "<br>" + escapeHtml(poi.address || "暂无地址") + "</div>" +
+          "</div>" +
+        "</label>";
+      }).join("");
+    }
+
+    function selectAllMapResults(checked) {
+      if (!isMapImportUnlocked()) return;
+      document.querySelectorAll(".map-poi-checkbox").forEach(box => {
+        box.checked = checked;
+      });
+    }
+
+    function normalizeMapPoi(poi) {
+      const firstPhoto = Array.isArray(poi.photos) && poi.photos.length ? normalizePoiText(poi.photos[0].url) : "";
+      const bizExt = poi.biz_ext || {};
+      return {
+        id: normalizePoiText(poi.id),
+        name: normalizePoiText(poi.name),
+        address: normalizePoiText(poi.address),
+        location: normalizePoiText(poi.location),
+        type: normalizePoiText(poi.type),
+        distance: Number(poi.distance || 0),
+        tel: normalizePoiText(poi.tel),
+        rating: normalizePoiText(bizExt.rating),
+        cost: normalizePoiText(bizExt.cost),
+        business_area: normalizePoiText(poi.business_area),
+        photo_url: firstPhoto
+      };
+    }
+
+    async function importSelectedMapRestaurants() {
+      if (!isMapImportUnlocked()) return;
+      const checked = Array.from(document.querySelectorAll(".map-poi-checkbox:checked"));
+      if (!checked.length) {
+        alert("请先勾选当前页要导入的饭店。 ");
+        return;
+      }
+
+      const selectedPois = checked.map(box => mapSearchResults[Number(box.value)]).filter(Boolean);
+      if (!selectedPois.length) {
+        alert("没有有效的选中饭店。 ");
+        return;
+      }
+
+      if (!confirm("确定导入当前页选中的 " + selectedPois.length + " 家饭店吗？已存在的饭店会跳过或补充地图信息。")) return;
+      await importMapPoisToRestaurants(selectedPois, "当前页导入");
+    }
+
+    async function importAllMapRestaurants() {
+      if (!isMapImportUnlocked()) return;
+      if (!mapLastSearchParams) {
+        alert("请先搜索附近饭店。 ");
+        return;
+      }
+
+      if (!confirm("确定导入当前搜索条件下的全部饭店吗？系统会从第 1 页开始自动翻页搜索，并导入能搜索到的全部结果。")) return;
+
+      try {
+        mapStatus.innerText = "正在搜索全部饭店，请稍等...";
+
+        const poiMap = new Map();
+        let page = 1;
+
+        while (true) {
+          mapStatus.innerText = "正在搜索全部饭店：第 " + page + " 页，每页最多 25 家...";
+
+          const data = await amapAroundWithRetry({
+            key: mapLastSearchParams.key,
+            location: mapLastSearchParams.location,
+            keywords: mapLastSearchParams.keywords,
+            types: "050000",
+            radius: mapLastSearchParams.radius,
+            offset: "25",
+            page: String(page),
+            extensions: "all"
+          }, "全部导入第 " + page + " 页");
+
+          const pois = data.pois || [];
+          let newCountInThisPage = 0;
+
+          pois.forEach(poi => {
+            const normalized = normalizeMapPoi(poi);
+            if (!normalized.name) return;
+            const uniqueKey = normalized.id || (normalized.name + "|" + normalized.address);
+            if (!poiMap.has(uniqueKey)) {
+              poiMap.set(uniqueKey, normalized);
+              newCountInThisPage += 1;
+            }
+          });
+
+          if (pois.length < 25 || newCountInThisPage === 0) {
+            break;
+          }
+
+          page += 1;
+          await sleep(1200);
+        }
+
+        const allPois = Array.from(poiMap.values());
+        if (!allPois.length) {
+          alert("没有搜索到可导入的饭店。 ");
+          mapStatus.innerText = "没有搜索到可导入的饭店。";
+          return;
+        }
+
+        if (!confirm("全部搜索完成，共找到 " + allPois.length + " 家不重复饭店。确定导入吗？")) {
+          mapStatus.innerText = "已取消导入全部饭店。";
+          return;
+        }
+
+        await importMapPoisToRestaurants(allPois, "全部导入");
+      } catch (error) {
+        console.error(error);
+        mapStatus.innerText = "导入全部饭店失败：" + error.message;
+        alert("导入全部饭店失败：" + error.message);
+      }
+    }
+
+    async function importMapPoisToRestaurants(selectedPois, sourceLabel) {
+      try {
+        mapStatus.innerText = sourceLabel + "：正在读取已有饭店...";
+        await loadRestaurants();
+
+        const existingByName = new Map(restaurants.map(item => [item.name, item]));
+        let insertedCount = 0;
+        let updatedCount = 0;
+        let skippedCount = 0;
+
+        const newRows = [];
+        const updateRows = [];
+
+        selectedPois.forEach(poi => {
+          const existing = existingByName.get(poi.name);
+          const row = {
+            name: poi.name,
+            address: poi.address || null,
+            map_poi_id: poi.id || null,
+            map_location: poi.location || null,
+            map_type: poi.type || null,
+            photo_url: poi.photo_url || null,
+            distance_m: poi.distance || null,
+            map_tel: poi.tel || null,
+            map_rating: poi.rating || null,
+            map_cost: poi.cost || null,
+            map_business_area: poi.business_area || null
+          };
+
+          if (!existing) {
+            newRows.push(row);
+          } else {
+            const updateData = {
+              address: existing.address || row.address,
+              map_poi_id: existing.map_poi_id || row.map_poi_id,
+              map_location: existing.map_location || row.map_location,
+              map_type: existing.map_type || row.map_type,
+              distance_m: existing.distance_m || row.distance_m,
+              map_tel: existing.map_tel || row.map_tel,
+              map_rating: existing.map_rating || row.map_rating,
+              map_cost: existing.map_cost || row.map_cost,
+              map_business_area: existing.map_business_area || row.map_business_area,
+              photo_url: existing.photo_url || row.photo_url
+            };
+
+            const hasNewInfo = Object.keys(updateData).some(key => updateData[key] !== (existing[key] || null));
+            if (hasNewInfo) {
+              updateRows.push({ id: existing.id, row: updateData });
+            } else {
+              skippedCount += 1;
+            }
+          }
+        });
+
+        if (newRows.length) {
+          mapStatus.innerText = sourceLabel + "：正在新增 " + newRows.length + " 家饭店...";
+          const { error } = await supabaseClient
+            .from("restaurants")
+            .insert(newRows);
+          if (error) throw error;
+          insertedCount = newRows.length;
+        }
+
+        for (const updateItem of updateRows) {
+          mapStatus.innerText = sourceLabel + "：正在补充已有饭店信息 " + (updatedCount + 1) + " / " + updateRows.length;
+          const { error } = await supabaseClient
+            .from("restaurants")
+            .update(updateItem.row)
+            .eq("id", updateItem.id);
+          if (error) throw error;
+          updatedCount += 1;
+        }
+
+        await loadRestaurants();
+        mapStatus.innerText = sourceLabel + "完成：新增 " + insertedCount + " 家，补充地图信息 " + updatedCount + " 家，跳过 " + skippedCount + " 家。";
+        alert(mapStatus.innerText);
+      } catch (error) {
+        console.error(error);
+        mapStatus.innerText = sourceLabel + "失败：" + error.message;
+        alert(sourceLabel + "失败：" + error.message);
+      }
+    }
+
     function showRestaurantDetail(id) {
       const item = restaurants.find(r => r.id === id);
       if (!item) return;
@@ -1568,6 +2281,20 @@
         ${item.weather_tags
           ? `<div class="dish-box">${escapeHtml(item.weather_tags)}</div>`
           : `<div class="modal-no-photo">暂无天气标签。建议填写：热天推荐、热天不推荐、冷天推荐、雨天推荐、有空调、距离近、清淡等。</div>`
+        }
+
+        <h4>地图信息</h4>
+        ${item.address || item.distance_m || item.map_type || item.map_tel || item.map_rating || item.map_cost || item.map_business_area
+          ? `<div class="dish-box">${escapeHtml([
+              item.address ? "地址：" + item.address : "",
+              item.distance_m ? "距离：" + item.distance_m + "m" : "",
+              item.map_type ? "类型：" + item.map_type : "",
+              item.map_business_area ? "商圈：" + item.map_business_area : "",
+              item.map_tel ? "电话：" + item.map_tel : "",
+              item.map_rating ? "评分：" + item.map_rating : "",
+              item.map_cost ? "人均：" + item.map_cost : ""
+            ].filter(Boolean).join(String.fromCharCode(10)))}</div>`
+          : `<div class="modal-no-photo">暂无地图信息。可以用“从地图导入饭店”补充。</div>`
         }
       `;
 
@@ -2010,10 +2737,7 @@
           description: weatherText
         };
 
-        weatherContent.innerHTML = `
-          <span class="weather-temp">${Number.isFinite(temp) ? temp.toFixed(1) : "--"}°C</span>
-          <span>${weatherText}｜降雨概率 ${probability}%</span>
-        `;
+        weatherContent.innerText = `广州 ${Number.isFinite(temp) ? temp.toFixed(1) : "--"}°C｜${weatherText}｜降雨 ${probability}%`;
 
         const advices = [];
         if (Number.isFinite(temp) && temp >= 30) {
