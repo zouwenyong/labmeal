@@ -657,44 +657,44 @@
       .container > .card,
       .container > .top-mini-bar,
       .container > details.card {
-        order: 10;
+        order: 50;
       }
 
-      .top-mini-bar {
+      .section-top {
         order: 1 !important;
         justify-content: flex-start;
       }
 
-      .eat-card {
+      .section-eat {
         order: 2 !important;
       }
 
-      .container > .card:nth-of-type(3) {
+      .section-decision {
+        order: 3 !important;
+      }
+
+      .section-vote {
         order: 4 !important;
       }
 
-      .container > .card:nth-of-type(4) {
+      .section-restaurants {
         order: 5 !important;
       }
 
-      .container > details.card:nth-of-type(5) {
+      .section-add {
         order: 6 !important;
       }
 
-      .container > details.card:nth-of-type(6) {
+      .section-bulk {
         order: 7 !important;
       }
 
-      .container > .card:nth-of-type(7) {
+      .section-map {
         order: 8 !important;
       }
 
-      .container > .card:nth-of-type(8) {
+      .section-history {
         order: 9 !important;
-      }
-
-      .today-decision-card {
-        order: 3 !important;
       }
 
       .pwa-card {
@@ -773,7 +773,7 @@
       共享版：饭店名、饭店照片、菜单照片和推荐菜保存到 Supabase。你和同学打开同一个网页，就能看到同一份饭店库。
     </div>
 
-    <div class="top-mini-bar">
+    <div class="top-mini-bar section-top">
       <button id="pwaInstallButton" class="btn-primary" onclick="installPWA()" style="display:none;">安装到桌面</button>
       <button class="btn-gray" onclick="showPWAHelp()">安装到桌面</button>
       <button class="weather-mini-button" onclick="showWeatherDetail()">
@@ -787,12 +787,12 @@
       <span class="hidden-status" id="pwaStatus"></span>
     </div>
 
-    <div class="card today-decision-card">
+    <div class="card today-decision-card section-decision">
       <h2>今日已决定</h2>
       <div id="todayDecisionBox" class="today-decision-content">今天还没有确认最终吃哪家。</div>
     </div>
 
-    <div class="card eat-card">
+    <div class="card eat-card section-eat">
       <h2>1. 今天吃什么</h2>
       <div id="resultBox">
         <div>点击下面按钮开始随机推荐</div>
@@ -805,7 +805,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card section-vote">
       <h2>2. 今日投票</h2>
       <div class="note">
         可以先随机生成 3 个候选饭店，然后让同学投票。每个设备当天默认只有一票，重复投票会覆盖之前的选择。
@@ -830,7 +830,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card section-restaurants">
       <h2>3. 已保存的饭店</h2>
       <div class="search-row">
         <label>搜索饭店</label>
@@ -844,7 +844,7 @@
       </div>
     </div>
 
-    <details class="card collapsible-card">
+    <details class="card collapsible-card section-add">
       <summary>4. 添加 / 更新饭店</summary>
       <div class="collapsible-body">
         <label>饭店名 <span style="color:#dc2626;">*</span></label>
@@ -901,7 +901,7 @@
       </div>
     </details>
 
-    <details class="card collapsible-card">
+    <details class="card collapsible-card section-bulk">
       <summary>5. 批量导入饭店</summary>
       <div class="collapsible-body">
         <label>批量饭店列表</label>
@@ -923,7 +923,7 @@
       </div>
     </details>
 
-    <div class="card">
+    <div class="card section-map">
       <h2>6. 从地图导入饭店</h2>
       <div class="note">
         地图导入属于管理功能，需要先输入密码。高德 Key 默认隐藏，解锁后才能填写或查看；Key 只保存在当前浏览器，不会写入 GitHub 代码。搜索结果每页显示 25 家，可以导入当前页选中的饭店，也可以一键导入该条件下搜索到的全部饭店。
@@ -972,7 +972,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card section-history">
       <h2>7. 历史记录</h2>
       <div id="historyList"></div>
       <button class="btn-gray" onclick="loadHistory()">刷新历史记录</button>
