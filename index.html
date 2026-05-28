@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>今天实验室吃啥 - 共享版</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 22px 16px 46px;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 8px 0 8px;
+      font-size: 34px;
+      letter-spacing: -1px;
+    }
+
+    .desc {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 22px;
+      line-height: 1.7;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+      border: 1px solid #eef2f7;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 21px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 15px;
+      background: white;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    button {
+      padding: 11px 16px;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-top: 10px;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-success {
+      background: #16a34a;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-gray {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .note {
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.7;
+      margin-top: 10px;
+    }
+
+    .status {
+      color: #2563eb;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+
+    .option-box {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    #previewImage {
+      max-width: 220px;
+      max-height: 180px;
+      display: none;
+      margin-top: 12px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      object-fit: cover;
+    }
+
+    .camera-box {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #111827;
+    }
+
+    #cameraVideo {
+      width: 100%;
+      max-height: 360px;
+      border-radius: 12px;
+      background: #000;
+      object-fit: cover;
+    }
+
+    .camera-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    #ocrStatus {
+      color: #4b5563;
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    #resultBox {
+      min-height: 180px;
+      background: linear-gradient(145deg, #eff6ff, #ffffff);
+      border: 1px solid #bfdbfe;
+      border-radius: 16px;
+      padding: 22px;
+      text-align: center;
+    }
+
+    #resultName {
+      font-size: 34px;
+      font-weight: 900;
+      margin: 12px 0;
+      color: #1e3a8a;
+      word-break: break-word;
+    }
+
+    #resultPhoto {
+      width: 220px;
+      max-width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 16px;
+      display: none;
+      margin: 12px auto 4px;
+      border: 1px solid #dbeafe;
+    }
+
+    .restaurant-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 15px;
+    }
+
+    .restaurant-item {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 5px 16px rgba(15, 23, 42, 0.06);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .restaurant-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.09);
+    }
+
+    .restaurant-item img {
+      width: 100%;
+      height: 125px;
+      object-fit: cover;
+      display: block;
+      background: #f3f4f6;
+    }
+
+    .no-photo {
+      width: 100%;
+      height: 125px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 6px;
+      background: #f3f4f6;
+      color: #6b7280;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .no-photo .icon {
+      font-size: 28px;
+    }
+
+    .restaurant-name {
+      padding: 12px 10px 8px;
+      font-weight: 900;
+      text-align: center;
+      word-break: break-word;
+    }
+
+    .restaurant-actions {
+      display: flex;
+      justify-content: center;
+      padding: 0 10px 12px;
+    }
+
+    .restaurant-actions button {
+      margin: 0;
+      padding: 7px 12px;
+      font-size: 12px;
+    }
+
+    .history-item {
+      padding: 11px 0;
+      border-bottom: 1px solid #eef2f7;
+      line-height: 1.55;
+    }
+
+    .history-time {
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.56);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: white;
+      max-width: 520px;
+      width: 100%;
+      border-radius: 18px;
+      padding: 22px;
+      text-align: center;
+      position: relative;
+    }
+
+    .modal-content h3 {
+      margin: 0 34px 14px;
+      font-size: 22px;
+      word-break: break-word;
+    }
+
+    .modal-content img {
+      width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+      border-radius: 14px;
+      margin-top: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .modal-no-photo {
+      background: #f3f4f6;
+      color: #6b7280;
+      padding: 60px 20px;
+      border-radius: 14px;
+      font-weight: 700;
+      line-height: 1.8;
+    }
+
+    .close-btn {
+      position: absolute;
+      right: 16px;
+      top: 12px;
+      font-size: 26px;
+      cursor: pointer;
+      color: #6b7280;
+      user-select: none;
+    }
+
+    .empty {
+      color: #6b7280;
+      padding: 12px 0;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 620px) {
+      h1 {
+        font-size: 28px;
+      }
+
+      #resultName {
+        font-size: 26px;
+      }
+
+      .restaurant-list {
+        grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>今天实验室吃啥？</h1>
+    <div class="desc">
+      共享版：饭店名和照片保存到 Supabase。你和同学打开同一个网页，就能看到同一份饭店库。
+    </div>
+
+    <div class="card">
+      <h2>1. 添加饭店</h2>
+
+      <label>饭店名 <span style="color:#dc2626;">*</span></label>
+      <input type="text" id="restaurantName" placeholder="例如：兰州拉面" />
+
+      <div class="option-box">
+        <label>饭店照片，可选</label>
+        <input type="file" id="photoInput" accept="image/*" />
+
+        <div class="button-row">
+          <button class="btn-primary" onclick="openCamera()">打开摄像头拍照</button>
+          <button class="btn-warning" onclick="recognizeText()">从当前照片识别饭店名</button>
+          <button class="btn-gray" onclick="clearCurrentPhoto()">清除当前照片</button>
+        </div>
+
+        <div id="cameraBox" class="camera-box">
+          <video id="cameraVideo" autoplay playsinline></video>
+          <canvas id="captureCanvas" style="display:none;"></canvas>
+          <div class="camera-actions">
+            <button class="btn-success" onclick="capturePhoto()">拍照</button>
+            <button class="btn-gray" onclick="closeCamera()">关闭摄像头</button>
+          </div>
+        </div>
+
+        <img id="previewImage" alt="饭店照片预览" />
+
+        <div id="ocrStatus"></div>
+        <div class="note">
+          可以只输入饭店名保存，也可以上传/拍摄照片后一起保存。照片会上传到 Supabase Storage。
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="btn-success" onclick="saveRestaurant()">保存饭店</button>
+        <button class="btn-gray" onclick="loadRestaurants()">刷新饭店库</button>
+        <button class="btn-danger" onclick="clearAllRestaurants()">清空所有饭店</button>
+      </div>
+      <div id="globalStatus" class="status"></div>
+    </div>
+
+    <div class="card">
+      <h2>2. 今天吃什么</h2>
+      <div id="resultBox">
+        <div>点击下面按钮开始随机推荐</div>
+        <div id="resultName">还没有推荐结果</div>
+        <img id="resultPhoto" alt="推荐饭店照片" />
+        <button class="btn-primary" onclick="pickRestaurant()">随机推荐</button>
+        <button class="btn-success" onclick="confirmToday()">确认今天吃这家</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3. 已保存的饭店</h2>
+      <div id="restaurantList" class="restaurant-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>4. 历史记录</h2>
+      <div id="historyList"></div>
+      <button class="btn-gray" onclick="loadHistory()">刷新历史记录</button>
+      <button class="btn-danger" onclick="clearHistory()">清空历史记录</button>
+    </div>
+  </div>
+
+  <div id="photoModal" class="modal" onclick="closeModal(event)">
+    <div class="modal-content">
+      <span class="close-btn" onclick="hideModal()">&times;</span>
+      <h3 id="modalTitle"></h3>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    // 第一步：把下面两个值替换成你自己的 Supabase 信息。
+    const SUPABASE_URL = "https://ebtwvggzahdfzncccppo.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_MqlVMgJABhdIkDJUhWwIIw_9oc2JLRC";
+
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const PHOTO_BUCKET = "restaurant-photos";
+
+    let restaurants = [];
+    let historyData = [];
+    let currentPick = null;
+    let currentPhotoBase64 = "";
+    let currentPhotoFile = null;
+    let cameraStream = null;
+
+    const photoInput = document.getElementById("photoInput");
+    const previewImage = document.getElementById("previewImage");
+    const restaurantNameInput = document.getElementById("restaurantName");
+    const ocrStatus = document.getElementById("ocrStatus");
+    const globalStatus = document.getElementById("globalStatus");
+    const restaurantList = document.getElementById("restaurantList");
+    const historyList = document.getElementById("historyList");
+    const resultName = document.getElementById("resultName");
+    const resultPhoto = document.getElementById("resultPhoto");
+    const cameraBox = document.getElementById("cameraBox");
+    const cameraVideo = document.getElementById("cameraVideo");
+    const captureCanvas = document.getElementById("captureCanvas");
+
+    photoInput.addEventListener("change", function() {
+      const file = this.files[0];
+      if (!file) return;
+
+      currentPhotoFile = file;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentPhotoBase64 = e.target.result;
+        previewImage.src = currentPhotoBase64;
+        previewImage.style.display = "block";
+        ocrStatus.innerText = "图片已选择。你可以点击“从当前照片识别饭店名”，也可以直接手动输入饭店名后保存。";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function setStatus(message) {
+      globalStatus.innerText = message || "";
+    }
+
+    async function openCamera() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("当前浏览器不支持直接调用摄像头。你可以改用“选择文件”上传照片。");
+        return;
+      }
+
+      try {
+        closeCamera();
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "environment" } },
+          audio: false
+        });
+        cameraVideo.srcObject = cameraStream;
+        cameraBox.style.display = "block";
+        ocrStatus.innerText = "摄像头已打开。把饭店招牌放在画面中，然后点击“拍照”。";
+      } catch (error) {
+        console.error(error);
+        alert("摄像头打开失败。可能是浏览器没有权限，或者当前页面不是 HTTPS/localhost。你也可以直接选择本地图片。");
+      }
+    }
+
+    function capturePhoto() {
+      if (!cameraStream) {
+        alert("请先打开摄像头。");
+        return;
+      }
+
+      const width = cameraVideo.videoWidth || 1280;
+      const height = cameraVideo.videoHeight || 720;
+      captureCanvas.width = width;
+      captureCanvas.height = height;
+
+      const context = captureCanvas.getContext("2d");
+      context.drawImage(cameraVideo, 0, 0, width, height);
+
+      currentPhotoBase64 = captureCanvas.toDataURL("image/jpeg", 0.86);
+      currentPhotoFile = dataURLToFile(currentPhotoBase64, `camera-${Date.now()}.jpg`);
+      previewImage.src = currentPhotoBase64;
+      previewImage.style.display = "block";
+      photoInput.value = "";
+      ocrStatus.innerText = "拍照完成。你可以点击“从当前照片识别饭店名”，也可以直接保存这张照片。";
+    }
+
+    function closeCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+      cameraVideo.srcObject = null;
+      cameraBox.style.display = "none";
+    }
+
+    async function recognizeText() {
+      const imageSource = currentPhotoFile || currentPhotoBase64;
+      if (!imageSource) {
+        alert("请先选择图片，或者打开摄像头拍一张照片。如果不想拍照，也可以直接输入饭店名并保存。");
+        return;
+      }
+
+      ocrStatus.innerText = "正在识别店名，请稍等。第一次使用可能会慢一点。";
+
+      try {
+        const result = await Tesseract.recognize(imageSource, "chi_sim+eng");
+        let text = result.data.text.trim();
+        text = text.replaceAll(String.fromCharCode(10), " ").replaceAll(String.fromCharCode(13), " ").replaceAll(String.fromCharCode(9), " ");
+        while (text.includes("  ")) {
+          text = text.replaceAll("  ", " ");
+        }
+        text = text.trim();
+
+        if (!text) {
+          ocrStatus.innerText = "没有识别到明显文字。你可以重新拍照，或者直接手动输入饭店名。";
+          return;
+        }
+
+        restaurantNameInput.value = text;
+        ocrStatus.innerText = "识别完成。如果饭店名不准确，可以手动修改后再保存。";
+      } catch (error) {
+        console.error(error);
+        ocrStatus.innerText = "识别失败。你可以重试，或者直接手动输入饭店名。";
+      }
+    }
+
+    async function uploadPhotoIfNeeded(name) {
+      if (!currentPhotoFile) return "";
+
+      const safeName = name.replace(/[^a-zA-Z0-9一-龥]/g, "_");
+      const fileExt = currentPhotoFile.name.split(".").pop() || "jpg";
+      const filePath = `${Date.now()}-${safeName}.${fileExt}`;
+
+      const { error: uploadError } = await supabaseClient.storage
+        .from(PHOTO_BUCKET)
+        .upload(filePath, currentPhotoFile, {
+          cacheControl: "3600",
+          upsert: false
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data } = supabaseClient.storage
+        .from(PHOTO_BUCKET)
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    }
+
+    async function saveRestaurant() {
+      const name = restaurantNameInput.value.trim();
+
+      if (!name) {
+        alert("请先输入饭店名。可以手动输入，也可以上传照片或拍照后识别饭店名。");
+        return;
+      }
+
+      try {
+        setStatus("正在保存到云端...");
+        const existing = restaurants.find(item => item.name === name);
+        const photoUrl = await uploadPhotoIfNeeded(name);
+
+        if (existing) {
+          if (photoUrl) {
+            const shouldUpdate = confirm("这家饭店已经存在。是否用当前照片更新它？");
+            if (!shouldUpdate) {
+              setStatus("已取消更新。");
+              return;
+            }
+
+            const { error } = await supabaseClient
+              .from("restaurants")
+              .update({ photo_url: photoUrl })
+              .eq("id", existing.id);
+
+            if (error) throw error;
+            alert("已更新这家饭店的照片。刷新后所有同学都能看到。");
+          } else {
+            alert("这家饭店已经保存过了。可以换一个名字，或者上传照片后更新。");
+          }
+        } else {
+          const { error } = await supabaseClient
+            .from("restaurants")
+            .insert([{ name, photo_url: photoUrl || null }]);
+
+          if (error) throw error;
+          alert(photoUrl ? "饭店和照片已保存到云端！" : "饭店已保存到云端，暂时没有照片。");
+        }
+
+        resetAddForm();
+        await loadRestaurants();
+        setStatus("保存成功。其他同学刷新网页后也能看到。");
+      } catch (error) {
+        console.error(error);
+        setStatus("保存失败。请检查 Supabase URL、anon key、表权限和 Storage 权限。错误：" + error.message);
+        alert("保存失败：" + error.message);
+      }
+    }
+
+    function resetAddForm() {
+      restaurantNameInput.value = "";
+      photoInput.value = "";
+      previewImage.style.display = "none";
+      previewImage.src = "";
+      currentPhotoBase64 = "";
+      currentPhotoFile = null;
+      ocrStatus.innerText = "";
+      closeCamera();
+    }
+
+    function clearCurrentPhoto() {
+      photoInput.value = "";
+      previewImage.style.display = "none";
+      previewImage.src = "";
+      currentPhotoBase64 = "";
+      currentPhotoFile = null;
+      ocrStatus.innerText = "已清除当前照片。你仍然可以只输入饭店名并保存。";
+    }
+
+    async function loadRestaurants() {
+      try {
+        setStatus("正在从云端读取饭店库...");
+        const { data, error } = await supabaseClient
+          .from("restaurants")
+          .select("id, name, photo_url, created_at")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        restaurants = data || [];
+        renderRestaurants();
+        setStatus("饭店库已刷新。当前共有 " + restaurants.length + " 家饭店。");
+      } catch (error) {
+        console.error(error);
+        restaurantList.innerHTML = "<div class='empty'>读取饭店库失败。请检查 Supabase URL、anon key 和 RLS 权限。</div>";
+        setStatus("读取饭店库失败：" + error.message);
+      }
+    }
+
+    function renderRestaurants() {
+      if (restaurants.length === 0) {
+        restaurantList.innerHTML = "<div class='empty'>还没有保存任何饭店。你可以先只输入饭店名保存一个。</div>";
+        return;
+      }
+
+      restaurantList.innerHTML = restaurants.map(item => `
+        <div class="restaurant-item" onclick="showRestaurantPhoto('${item.id}')">
+          ${item.photo_url
+            ? `<img src="${item.photo_url}" alt="${escapeHtml(item.name)}">`
+            : `<div class="no-photo"><div class="icon">🍽️</div><div>暂无照片</div></div>`
+          }
+          <div class="restaurant-name">${escapeHtml(item.name)}</div>
+          <div class="restaurant-actions">
+            <button class="btn-danger" onclick="deleteRestaurant(event, '${item.id}')">删除</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function showRestaurantPhoto(id) {
+      const item = restaurants.find(r => r.id === id);
+      if (!item) return;
+
+      document.getElementById("modalTitle").innerText = item.name;
+      const modalBody = document.getElementById("modalBody");
+
+      if (item.photo_url) {
+        modalBody.innerHTML = `<img src="${item.photo_url}" alt="${escapeHtml(item.name)}">`;
+      } else {
+        modalBody.innerHTML = `<div class="modal-no-photo">这家饭店目前没有保存照片。<br />可以以后再次输入同名饭店并上传照片来补充。</div>`;
+      }
+
+      document.getElementById("photoModal").style.display = "flex";
+    }
+
+    function hideModal() {
+      document.getElementById("photoModal").style.display = "none";
+    }
+
+    function closeModal(event) {
+      if (event.target.id === "photoModal") {
+        hideModal();
+      }
+    }
+
+    async function deleteRestaurant(event, id) {
+      event.stopPropagation();
+      const item = restaurants.find(r => r.id === id);
+      if (!item) return;
+
+      if (!confirm(`确定删除“${item.name}”吗？所有同学都会看不到这家饭店。`)) return;
+
+      try {
+        const { error } = await supabaseClient
+          .from("restaurants")
+          .delete()
+          .eq("id", id);
+
+        if (error) throw error;
+
+        if (currentPick && currentPick.id === id) {
+          currentPick = null;
+          resultName.innerText = "还没有推荐结果";
+          resultPhoto.style.display = "none";
+          resultPhoto.src = "";
+        }
+
+        await loadRestaurants();
+        setStatus("已删除饭店。其他同学刷新后也会同步变化。");
+      } catch (error) {
+        console.error(error);
+        alert("删除失败：" + error.message);
+      }
+    }
+
+    function pickRestaurant() {
+      if (restaurants.length === 0) {
+        alert("请先保存至少一家饭店。只输入饭店名也可以保存。");
+        return;
+      }
+
+      const randomIndex = Math.floor(Math.random() * restaurants.length);
+      currentPick = restaurants[randomIndex];
+      resultName.innerText = currentPick.name;
+
+      if (currentPick.photo_url) {
+        resultPhoto.src = currentPick.photo_url;
+        resultPhoto.style.display = "block";
+      } else {
+        resultPhoto.style.display = "none";
+        resultPhoto.src = "";
+      }
+    }
+
+    async function confirmToday() {
+      if (!currentPick) {
+        alert("请先随机推荐一家饭店。");
+        return;
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from("meal_history")
+          .insert([{ restaurant_name: currentPick.name }]);
+
+        if (error) throw error;
+        await loadHistory();
+        alert("已记录今天吃这家！所有同学刷新后都能看到历史记录。");
+      } catch (error) {
+        console.error(error);
+        alert("保存历史记录失败：" + error.message);
+      }
+    }
+
+    async function loadHistory() {
+      try {
+        const { data, error } = await supabaseClient
+          .from("meal_history")
+          .select("id, restaurant_name, created_at")
+          .order("created_at", { ascending: false })
+          .limit(30);
+
+        if (error) throw error;
+        historyData = data || [];
+        renderHistory();
+      } catch (error) {
+        console.error(error);
+        historyList.innerHTML = "<div class='empty'>读取历史记录失败。</div>";
+      }
+    }
+
+    function renderHistory() {
+      if (historyData.length === 0) {
+        historyList.innerHTML = "<div class='empty'>暂无历史记录。</div>";
+        return;
+      }
+
+      historyList.innerHTML = historyData.map(item => {
+        const time = new Date(item.created_at).toLocaleString("zh-CN");
+        return `
+          <div class="history-item">
+            <strong>${escapeHtml(item.restaurant_name)}</strong><br>
+            <span class="history-time">${escapeHtml(time)}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function clearHistory() {
+      if (!confirm("确定清空所有历史记录吗？所有同学都会看不到这些历史记录。")) return;
+
+      try {
+        const { error } = await supabaseClient
+          .from("meal_history")
+          .delete()
+          .not("id", "is", null);
+
+        if (error) throw error;
+        await loadHistory();
+        alert("历史记录已清空。");
+      } catch (error) {
+        console.error(error);
+        alert("清空失败：" + error.message);
+      }
+    }
+
+    async function clearAllRestaurants() {
+      if (!restaurants.length) return;
+      if (!confirm("确定清空所有饭店吗？所有同学都会看不到这些饭店。这个操作不会清空历史记录。")) return;
+
+      try {
+        const { error } = await supabaseClient
+          .from("restaurants")
+          .delete()
+          .not("id", "is", null);
+
+        if (error) throw error;
+        currentPick = null;
+        resultName.innerText = "还没有推荐结果";
+        resultPhoto.style.display = "none";
+        resultPhoto.src = "";
+        await loadRestaurants();
+        alert("所有饭店已清空。");
+      } catch (error) {
+        console.error(error);
+        alert("清空失败：" + error.message);
+      }
+    }
+
+    function dataURLToFile(dataUrl, filename) {
+      const arr = dataUrl.split(",");
+      const mimeMatch = arr[0].match(/:(.*?);/);
+      const mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], filename, { type: mime });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function init() {
+      if (SUPABASE_URL.includes("在这里填") || SUPABASE_ANON_KEY.includes("在这里填")) {
+        restaurantList.innerHTML = "<div class='empty'>请先在代码里填写 Supabase URL 和 anon public key。</div>";
+        historyList.innerHTML = "<div class='empty'>填写 Supabase 信息后再刷新页面。</div>";
+        setStatus("还没有配置 Supabase URL 和 anon key。请先按照下一步填写。 ");
+        return;
+      }
+
+      await loadRestaurants();
+      await loadHistory();
+    }
+
+    init();
+  </script>
+</body>
+</html>
