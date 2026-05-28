@@ -1,0 +1,19 @@
+{
+  "name": "今天实验室吃啥",
+  "short_name": "实验室吃啥",
+  "description": "实验室共享吃饭决策工具",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
