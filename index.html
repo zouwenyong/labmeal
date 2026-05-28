@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>今天实验室吃啥 - 共享版</title>
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="实验室吃啥" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -52,6 +59,13 @@
       font-size: 21px;
     }
 
+    h4 {
+      margin: 18px 0 8px;
+      font-size: 16px;
+      color: #111827;
+      text-align: left;
+    }
+
     label {
       display: block;
       margin-top: 12px;
@@ -60,16 +74,23 @@
       color: #374151;
     }
 
-    input[type="text"], input[type="file"] {
+    input[type="text"], input[type="file"], textarea {
       width: 100%;
       padding: 12px;
       border: 1px solid #d1d5db;
       border-radius: 12px;
       font-size: 15px;
       background: white;
+      font-family: inherit;
     }
 
-    input[type="text"]:focus {
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    input[type="text"]:focus, textarea:focus {
       outline: none;
       border-color: #2563eb;
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
@@ -145,7 +166,7 @@
       margin-top: 12px;
     }
 
-    #previewImage {
+    .preview-img {
       max-width: 220px;
       max-height: 180px;
       display: none;
@@ -213,6 +234,20 @@
       border: 1px solid #dbeafe;
     }
 
+    #resultDishes {
+      display: none;
+      max-width: 520px;
+      margin: 12px auto 0;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #fff7ed;
+      color: #7c2d12;
+      line-height: 1.7;
+      font-weight: 700;
+      text-align: left;
+      white-space: pre-wrap;
+    }
+
     .restaurant-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
@@ -267,6 +302,24 @@
       word-break: break-word;
     }
 
+    .restaurant-meta {
+      padding: 0 10px 8px;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #4b5563;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
     .restaurant-actions {
       display: flex;
       justify-content: center;
@@ -306,8 +359,10 @@
 
     .modal-content {
       background: white;
-      max-width: 520px;
+      max-width: 620px;
       width: 100%;
+      max-height: 88vh;
+      overflow: auto;
       border-radius: 18px;
       padding: 22px;
       text-align: center;
@@ -332,10 +387,21 @@
     .modal-no-photo {
       background: #f3f4f6;
       color: #6b7280;
-      padding: 60px 20px;
+      padding: 42px 20px;
       border-radius: 14px;
       font-weight: 700;
       line-height: 1.8;
+    }
+
+    .dish-box {
+      background: #fff7ed;
+      color: #7c2d12;
+      padding: 12px 14px;
+      border-radius: 14px;
+      line-height: 1.75;
+      font-weight: 700;
+      text-align: left;
+      white-space: pre-wrap;
     }
 
     .close-btn {
@@ -352,6 +418,215 @@
       color: #6b7280;
       padding: 12px 0;
       line-height: 1.7;
+    }
+
+    .top-dashboard {
+      position: static;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+
+    .top-dashboard .card {
+      margin-bottom: 0;
+    }
+
+    .weather-card {
+      background: linear-gradient(135deg, #e0f2fe, #ffffff 55%, #fff7ed);
+      border: 1px solid #bae6fd;
+    }
+
+    .weather-main {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .weather-temp {
+      font-size: 30px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .weather-desc {
+      color: #475569;
+      font-weight: 800;
+      line-height: 1.7;
+    }
+
+    .weather-advice {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.75);
+      color: #7c2d12;
+      line-height: 1.7;
+      font-weight: 800;
+    }
+
+    .quick-card {
+      background: linear-gradient(135deg, #f8fafc, #ffffff);
+      border: 1px solid #e2e8f0;
+    }
+
+    .quick-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 8px 0 10px;
+    }
+
+    .quick-stat {
+      border-radius: 14px;
+      background: #f8fafc;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+    }
+
+    .quick-stat-num {
+      font-size: 20px;
+      font-weight: 900;
+      color: #1e3a8a;
+    }
+
+    .quick-stat-label {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 800;
+      margin-top: 2px;
+    }
+
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .quick-actions button {
+      margin: 0;
+      padding: 9px 12px;
+      font-size: 13px;
+    }
+
+    .vote-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .vote-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 5px 16px rgba(15, 23, 42, 0.06);
+    }
+
+    .vote-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      display: block;
+      background: #f3f4f6;
+    }
+
+    .vote-body {
+      padding: 12px;
+      text-align: center;
+    }
+
+    .vote-name {
+      font-weight: 900;
+      word-break: break-word;
+      margin-bottom: 6px;
+    }
+
+    .vote-count {
+      color: #2563eb;
+      font-weight: 900;
+      margin: 6px 0;
+    }
+
+    .vote-summary {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      color: #334155;
+      line-height: 1.7;
+      font-weight: 800;
+    }
+
+    .pwa-card {
+      background: linear-gradient(135deg, #eef2ff, #ffffff);
+      border: 1px solid #c7d2fe;
+    }
+
+    .pwa-install-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .pwa-install-row button {
+      margin: 0;
+    }
+
+    .today-decision-card {
+      background: linear-gradient(135deg, #dcfce7, #ffffff);
+      border: 1px solid #bbf7d0;
+    }
+
+    .today-decision-content {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #14532d;
+      font-weight: 800;
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+
+    .search-row {
+      margin-bottom: 14px;
+    }
+
+    .reason-box {
+      max-width: 560px;
+      margin: 12px auto 0;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      color: #334155;
+      line-height: 1.7;
+      text-align: left;
+      font-weight: 700;
+      white-space: pre-wrap;
+    }
+
+    .manual-vote-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+    }
+
+    @media (max-width: 760px) {
+      .top-dashboard {
+        position: static;
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 620px) {
@@ -373,11 +648,101 @@
   <div class="container">
     <h1>今天实验室吃啥？</h1>
     <div class="desc">
-      共享版：饭店名和照片保存到 Supabase。你和同学打开同一个网页，就能看到同一份饭店库。
+      共享版：饭店名、饭店照片、菜单照片和推荐菜保存到 Supabase。你和同学打开同一个网页，就能看到同一份饭店库。
+    </div>
+
+    <div class="card pwa-card">
+      <h2>安装到桌面</h2>
+      <div class="note">
+        可以把这个网页添加到手机或电脑桌面，之后像小程序一样打开。Chrome/Edge 可能会显示安装按钮；iPhone 可以用 Safari 的“分享 → 添加到主屏幕”。
+      </div>
+      <div class="pwa-install-row">
+        <button id="pwaInstallButton" class="btn-primary" onclick="installPWA()" style="display:none;">安装到桌面</button>
+        <button class="btn-gray" onclick="showPWAHelp()">查看安装方法</button>
+      </div>
+      <div id="pwaStatus" class="status"></div>
+    </div>
+
+    <div class="top-dashboard">
+      <div class="card weather-card">
+        <h2>广州今日天气</h2>
+        <div class="weather-main">
+          <div id="weatherContent" class="weather-desc">正在读取广州天气...</div>
+          <button class="btn-gray" onclick="loadGuangzhouWeather()">刷新天气</button>
+        </div>
+        <div id="weatherAdvice" class="weather-advice">天气建议加载中...</div>
+      </div>
+
+      <div class="card quick-card">
+        <h2>今日快捷面板</h2>
+        <div class="quick-stat-grid">
+          <div class="quick-stat">
+            <div id="quickRestaurantCount" class="quick-stat-num">--</div>
+            <div class="quick-stat-label">饭店</div>
+          </div>
+          <div class="quick-stat">
+            <div id="quickHistoryCount" class="quick-stat-num">--</div>
+            <div class="quick-stat-label">历史</div>
+          </div>
+          <div class="quick-stat">
+            <div id="quickVoteState" class="quick-stat-num">--</div>
+            <div class="quick-stat-label">投票</div>
+          </div>
+        </div>
+        <div class="quick-actions">
+          <button class="btn-primary" onclick="pickRestaurant()">随机一下</button>
+          <button class="btn-success" onclick="startVoteCandidates()">生成候选</button>
+          <button class="btn-gray" onclick="refreshAllData()">刷新全部</button>
+        </div>
+        <div class="note">天气、随机、投票和数据刷新放在同一行，打开网页后能更快操作。</div>
+      </div>
+    </div>
+
+    <div class="card today-decision-card">
+      <h2>今日已决定</h2>
+      <div id="todayDecisionBox" class="today-decision-content">今天还没有确认最终吃哪家。</div>
     </div>
 
     <div class="card">
-      <h2>1. 添加饭店</h2>
+      <h2>1. 今天吃什么</h2>
+      <div id="resultBox">
+        <div>点击下面按钮开始随机推荐</div>
+        <div id="resultName">还没有推荐结果</div>
+        <img id="resultPhoto" alt="推荐饭店照片" />
+        <div id="resultDishes"></div>
+        <div id="resultReason" class="reason-box" style="display:none;"></div>
+        <button class="btn-primary" onclick="pickRestaurant()">随机推荐</button>
+        <button class="btn-success" onclick="confirmToday()">确认今天吃这家</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2. 今日投票</h2>
+      <div class="note">
+        可以先随机生成 3 个候选饭店，然后让同学投票。每个设备当天默认只有一票，重复投票会覆盖之前的选择。
+      </div>
+      <div class="button-row">
+        <button class="btn-primary" onclick="startVoteCandidates()">生成今日候选</button>
+        <button class="btn-warning" onclick="startVoteCandidates()">换一批候选</button>
+        <button class="btn-gray" onclick="loadVoteCandidates()">刷新投票</button>
+        <button class="btn-danger" onclick="clearTodayVotes()">清空今日投票</button>
+      </div>
+      <div id="voteStatus" class="status"></div>
+      <div id="voteCandidatesList" class="vote-grid"></div>
+      <div id="voteSummary" class="vote-summary">还没有生成今日候选。</div>
+      <div class="manual-vote-box">
+        <label>手动设置候选，可选</label>
+        <textarea id="manualCandidateText" placeholder="每行一个饭店名，例如：
+兰州拉面
+黄焖鸡米饭
+麻辣烫"></textarea>
+        <div class="note">适合今天大家只想在固定几家店里面投票。饭店名需要已经存在于饭店库中。</div>
+        <button class="btn-success" onclick="setManualVoteCandidates()">使用这些饭店作为候选</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3. 添加 / 更新饭店</h2>
 
       <label>饭店名 <span style="color:#dc2626;">*</span></label>
       <input type="text" id="restaurantName" placeholder="例如：兰州拉面" />
@@ -387,53 +752,83 @@
         <input type="file" id="photoInput" accept="image/*" />
 
         <div class="button-row">
-          <button class="btn-primary" onclick="openCamera()">打开摄像头拍照</button>
-          <button class="btn-warning" onclick="recognizeText()">从当前照片识别饭店名</button>
-          <button class="btn-gray" onclick="clearCurrentPhoto()">清除当前照片</button>
+          <button class="btn-primary" onclick="openCamera()">打开摄像头拍饭店</button>
+          <button class="btn-warning" onclick="recognizeText()">从饭店照片识别店名</button>
+          <button class="btn-gray" onclick="clearCurrentPhoto()">清除饭店照片</button>
         </div>
 
         <div id="cameraBox" class="camera-box">
           <video id="cameraVideo" autoplay playsinline></video>
           <canvas id="captureCanvas" style="display:none;"></canvas>
           <div class="camera-actions">
-            <button class="btn-success" onclick="capturePhoto()">拍照</button>
+            <button class="btn-success" onclick="capturePhoto()">拍饭店照片</button>
             <button class="btn-gray" onclick="closeCamera()">关闭摄像头</button>
           </div>
         </div>
 
-        <img id="previewImage" alt="饭店照片预览" />
-
+        <img id="previewImage" class="preview-img" alt="饭店照片预览" />
         <div id="ocrStatus"></div>
-        <div class="note">
-          可以只输入饭店名保存，也可以上传/拍摄照片后一起保存。照片会上传到 Supabase Storage。
+      </div>
+
+      <div class="option-box">
+        <label>菜单照片，可选</label>
+        <input type="file" id="menuPhotoInput" accept="image/*" />
+        <img id="menuPreviewImage" class="preview-img" alt="菜单照片预览" />
+        <div class="button-row">
+          <button class="btn-gray" onclick="clearMenuPhoto()">清除菜单照片</button>
         </div>
+      </div>
+
+      <label>推荐菜，可选</label>
+      <textarea id="recommendedDishes" placeholder="例如：牛肉拉面、炒刀削面、鸡蛋炒饭。也可以写：不要点麻辣香锅，太咸。"></textarea>
+
+      <label>天气标签，可选</label>
+      <input type="text" id="weatherTags" placeholder="例如：热天不推荐、冷天推荐、雨天推荐、有空调、距离近、清淡" />
+
+      <div class="note">
+        可以只保存饭店名；也可以补充饭店照片、菜单照片、推荐菜和天气标签。输入同名饭店时，会进入更新逻辑。
       </div>
 
       <div class="button-row">
         <button class="btn-success" onclick="saveRestaurant()">保存饭店</button>
         <button class="btn-gray" onclick="loadRestaurants()">刷新饭店库</button>
+        <button class="btn-warning" onclick="cleanupUnusedPhotos()">清理无用照片</button>
       </div>
       <div id="globalStatus" class="status"></div>
     </div>
 
     <div class="card">
-      <h2>2. 今天吃什么</h2>
-      <div id="resultBox">
-        <div>点击下面按钮开始随机推荐</div>
-        <div id="resultName">还没有推荐结果</div>
-        <img id="resultPhoto" alt="推荐饭店照片" />
-        <button class="btn-primary" onclick="pickRestaurant()">随机推荐</button>
-        <button class="btn-success" onclick="confirmToday()">确认今天吃这家</button>
+      <h2>4. 批量导入饭店</h2>
+
+      <label>批量饭店列表</label>
+      <textarea id="bulkImportText" placeholder="支持三种格式：
+兰州拉面
+黄焖鸡米饭 | 黄焖鸡、土豆牛腩
+麻辣烫 | 宽粉、牛肉丸、少放辣 | 热天不推荐、冷天推荐"></textarea>
+
+      <div class="note">
+        每行一家饭店。格式：饭店名 | 推荐菜 | 天气标签。后两项都可以不写。
+        已有饭店不会重复添加；如果已有饭店这一行写了推荐菜或天气标签，会更新对应信息。
+      </div>
+
+      <div class="button-row">
+        <button class="btn-success" onclick="bulkImportRestaurants()">批量导入</button>
+        <button class="btn-gray" onclick="fillBulkImportExample()">填入示例</button>
+        <button class="btn-gray" onclick="clearBulkImportText()">清空输入</button>
       </div>
     </div>
 
     <div class="card">
-      <h2>3. 已保存的饭店</h2>
+      <h2>5. 已保存的饭店</h2>
+      <div class="search-row">
+        <label>搜索饭店</label>
+        <input type="text" id="restaurantSearchInput" placeholder="输入饭店名、推荐菜或天气标签，例如：拉面、有空调、清淡" />
+      </div>
       <div id="restaurantList" class="restaurant-list"></div>
     </div>
 
     <div class="card">
-      <h2>4. 历史记录</h2>
+      <h2>6. 历史记录</h2>
       <div id="historyList"></div>
       <button class="btn-gray" onclick="loadHistory()">刷新历史记录</button>
       <button class="btn-danger" onclick="clearHistory()">清空历史记录</button>
@@ -449,7 +844,6 @@
   </div>
 
   <script>
-    // 第一步：把下面两个值替换成你自己的 Supabase 信息。
     const SUPABASE_URL = "https://ebtwvggzahdfzncccppo.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVidHd2Z2d6YWhkZnpuY2NjcHBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NjM5MzMsImV4cCI6MjA5NTUzOTkzM30.Iufk25pjKS7r54uxTqvvuD75zzRSHAWCdEQcO7LLO1o";
 
@@ -458,36 +852,86 @@
 
     let restaurants = [];
     let historyData = [];
+    let currentVoteCandidates = [];
     let currentPick = null;
+    let currentWeather = {
+      temp: null,
+      rainRisk: false,
+      isHot: false,
+      isCold: false,
+      description: ""
+    };
+
     let currentPhotoBase64 = "";
     let currentPhotoFile = null;
+    let currentMenuPhotoBase64 = "";
+    let currentMenuPhotoFile = null;
     let cameraStream = null;
 
+    let deferredInstallPrompt = null;
+
     const photoInput = document.getElementById("photoInput");
+    const menuPhotoInput = document.getElementById("menuPhotoInput");
     const previewImage = document.getElementById("previewImage");
+    const menuPreviewImage = document.getElementById("menuPreviewImage");
     const restaurantNameInput = document.getElementById("restaurantName");
+    const recommendedDishesInput = document.getElementById("recommendedDishes");
+    const weatherTagsInput = document.getElementById("weatherTags");
+    const bulkImportText = document.getElementById("bulkImportText");
     const ocrStatus = document.getElementById("ocrStatus");
     const globalStatus = document.getElementById("globalStatus");
     const restaurantList = document.getElementById("restaurantList");
     const historyList = document.getElementById("historyList");
     const resultName = document.getElementById("resultName");
     const resultPhoto = document.getElementById("resultPhoto");
+    const resultDishes = document.getElementById("resultDishes");
+    const resultReason = document.getElementById("resultReason");
+    const weatherContent = document.getElementById("weatherContent");
+    const weatherAdvice = document.getElementById("weatherAdvice");
+    const voteCandidatesList = document.getElementById("voteCandidatesList");
+    const voteSummary = document.getElementById("voteSummary");
+    const voteStatus = document.getElementById("voteStatus");
+    const manualCandidateText = document.getElementById("manualCandidateText");
+    const todayDecisionBox = document.getElementById("todayDecisionBox");
+    const restaurantSearchInput = document.getElementById("restaurantSearchInput");
+    const quickRestaurantCount = document.getElementById("quickRestaurantCount");
+    const quickHistoryCount = document.getElementById("quickHistoryCount");
+    const quickVoteState = document.getElementById("quickVoteState");
+    const pwaInstallButton = document.getElementById("pwaInstallButton");
+    const pwaStatus = document.getElementById("pwaStatus");
     const cameraBox = document.getElementById("cameraBox");
     const cameraVideo = document.getElementById("cameraVideo");
     const captureCanvas = document.getElementById("captureCanvas");
+
+    window.addEventListener("beforeinstallprompt", function(event) {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      pwaInstallButton.style.display = "inline-block";
+      pwaStatus.innerText = "当前浏览器支持一键安装，可以点击“安装到桌面”。";
+    });
+
+    window.addEventListener("appinstalled", function() {
+      deferredInstallPrompt = null;
+      pwaInstallButton.style.display = "none";
+      pwaStatus.innerText = "已安装到桌面。之后可以直接从桌面图标打开。";
+    });
+
+    restaurantSearchInput.addEventListener("input", function() {
+      renderRestaurants();
+    });
 
     photoInput.addEventListener("change", async function() {
       const file = this.files[0];
       if (!file) return;
 
       try {
-        setStatus("正在处理图片，请稍等...");
+        setStatus("正在处理饭店照片，请稍等...");
         currentPhotoFile = await compressImageFile(file);
         currentPhotoBase64 = await fileToDataURL(currentPhotoFile);
         previewImage.src = currentPhotoBase64;
         previewImage.style.display = "block";
-        ocrStatus.innerText = "图片已选择并压缩。你可以点击“从当前照片识别饭店名”，也可以直接手动输入饭店名后保存。";
-        setStatus("图片处理完成，保存时会上传压缩后的照片。");
+        ocrStatus.innerText = "饭店照片已选择并压缩。可以识别店名，也可以直接保存。";
+        setStatus("饭店照片处理完成。 ");
       } catch (error) {
         console.error(error);
         alert("图片处理失败：" + error.message);
@@ -495,8 +939,73 @@
       }
     });
 
+    menuPhotoInput.addEventListener("change", async function() {
+      const file = this.files[0];
+      if (!file) return;
+
+      try {
+        setStatus("正在处理菜单照片，请稍等...");
+        currentMenuPhotoFile = await compressImageFile(file);
+        currentMenuPhotoBase64 = await fileToDataURL(currentMenuPhotoFile);
+        menuPreviewImage.src = currentMenuPhotoBase64;
+        menuPreviewImage.style.display = "block";
+        setStatus("菜单照片处理完成。 ");
+      } catch (error) {
+        console.error(error);
+        alert("菜单照片处理失败：" + error.message);
+        setStatus("菜单照片处理失败。可以换一张照片再试。 ");
+      }
+    });
+
     function setStatus(message) {
       globalStatus.innerText = message || "";
+    }
+
+    async function installPWA() {
+      if (!deferredInstallPrompt) {
+        showPWAHelp();
+        return;
+      }
+
+      deferredInstallPrompt.prompt();
+      const result = await deferredInstallPrompt.userChoice;
+      if (result.outcome === "accepted") {
+        pwaStatus.innerText = "正在安装到桌面...";
+      } else {
+        pwaStatus.innerText = "已取消安装。之后还可以继续安装。";
+      }
+      deferredInstallPrompt = null;
+      pwaInstallButton.style.display = "none";
+    }
+
+    function showPWAHelp() {
+      alert(
+        "安装方法：\n\n" +
+        "电脑 Chrome / Edge：地址栏右侧如果出现安装图标，点击安装；或点击页面里的“安装到桌面”。\n\n" +
+        "安卓 Chrome：打开网页后，点击浏览器菜单，选择“安装应用”或“添加到主屏幕”。\n\n" +
+        "iPhone Safari：点击底部分享按钮，选择“添加到主屏幕”。\n\n" +
+        "注意：需要网页通过 HTTPS 打开，GitHub Pages 链接满足这个条件。"
+      );
+    }
+
+    function registerServiceWorker() {
+      if (!("serviceWorker" in navigator)) {
+        pwaStatus.innerText = "当前浏览器不支持 Service Worker，但仍然可以正常使用网页。";
+        return;
+      }
+
+      window.addEventListener("load", function() {
+        navigator.serviceWorker.register("./service-worker.js")
+          .then(function() {
+            if (!pwaStatus.innerText) {
+              pwaStatus.innerText = "PWA 基础能力已启用。";
+            }
+          })
+          .catch(function(error) {
+            console.warn("Service Worker 注册失败：", error);
+            pwaStatus.innerText = "PWA 安装文件还未完全配置。请确认 GitHub 仓库里已有 service-worker.js。";
+          });
+      });
     }
 
     async function openCamera() {
@@ -513,7 +1022,7 @@
         });
         cameraVideo.srcObject = cameraStream;
         cameraBox.style.display = "block";
-        ocrStatus.innerText = "摄像头已打开。把饭店招牌放在画面中，然后点击“拍照”。";
+        ocrStatus.innerText = "摄像头已打开。把饭店招牌放在画面中，然后点击“拍饭店照片”。";
       } catch (error) {
         console.error(error);
         alert("摄像头打开失败。可能是浏览器没有权限，或者当前页面不是 HTTPS/localhost。你也可以直接选择本地图片。");
@@ -540,13 +1049,13 @@
         const context = captureCanvas.getContext("2d");
         context.drawImage(cameraVideo, 0, 0, targetWidth, targetHeight);
 
-        currentPhotoFile = await canvasToJpegFile(captureCanvas, `camera-${Date.now()}.jpg`, 0.78);
+        currentPhotoFile = await canvasToJpegFile(captureCanvas, `restaurant-camera-${Date.now()}.jpg`, 0.78);
         currentPhotoBase64 = await fileToDataURL(currentPhotoFile);
         previewImage.src = currentPhotoBase64;
         previewImage.style.display = "block";
         photoInput.value = "";
-        ocrStatus.innerText = "拍照完成，照片已自动压缩。你可以点击“从当前照片识别饭店名”，也可以直接保存这张照片。";
-        setStatus("拍照完成。保存时会上传压缩后的照片。 ");
+        ocrStatus.innerText = "拍照完成，照片已自动压缩。可以识别店名，也可以直接保存。";
+        setStatus("饭店照片拍摄完成。 ");
       } catch (error) {
         console.error(error);
         alert("拍照处理失败：" + error.message);
@@ -565,7 +1074,7 @@
     async function recognizeText() {
       const imageSource = currentPhotoFile || currentPhotoBase64;
       if (!imageSource) {
-        alert("请先选择图片，或者打开摄像头拍一张照片。如果不想拍照，也可以直接输入饭店名并保存。");
+        alert("请先选择饭店照片，或者打开摄像头拍一张饭店照片。如果不想拍照，也可以直接输入饭店名并保存。");
         return;
       }
 
@@ -645,15 +1154,15 @@
       return await canvasToJpegFile(canvas, `photo-${Date.now()}.jpg`, 0.78);
     }
 
-    async function uploadPhotoIfNeeded(name) {
-      if (!currentPhotoFile) return "";
+    async function uploadPhotoFile(file, prefix) {
+      if (!file) return "";
 
       const randomPart = Math.random().toString(36).slice(2);
-      const filePath = `restaurant-${Date.now()}-${randomPart}.jpg`;
+      const filePath = `${prefix}-${Date.now()}-${randomPart}.jpg`;
 
       const { error: uploadError } = await supabaseClient.storage
         .from(PHOTO_BUCKET)
-        .upload(filePath, currentPhotoFile, {
+        .upload(filePath, file, {
           cacheControl: "3600",
           upsert: false,
           contentType: "image/jpeg"
@@ -670,8 +1179,45 @@
       return data.publicUrl;
     }
 
+    function getStoragePathFromPublicUrl(publicUrl) {
+      if (!publicUrl) return "";
+      const marker = `/storage/v1/object/public/${PHOTO_BUCKET}/`;
+      const index = publicUrl.indexOf(marker);
+      if (index === -1) return "";
+      return decodeURIComponent(publicUrl.slice(index + marker.length).split("?")[0]);
+    }
+
+    async function deletePhotoFromStorage(photoUrl) {
+      const filePath = getStoragePathFromPublicUrl(photoUrl);
+      if (!filePath) {
+        throw new Error("无法从 photo_url 解析出 Storage 文件路径");
+      }
+
+      const { error } = await supabaseClient.storage
+        .from(PHOTO_BUCKET)
+        .remove([filePath]);
+
+      if (error) {
+        throw error;
+      }
+
+      return filePath;
+    }
+
+    async function safeDeletePhoto(photoUrl) {
+      if (!photoUrl) return;
+      try {
+        await deletePhotoFromStorage(photoUrl);
+      } catch (error) {
+        console.error(error);
+        alert("旧图片删除失败。可以稍后点击“清理无用照片”处理。错误：" + error.message);
+      }
+    }
+
     async function saveRestaurant() {
       const name = restaurantNameInput.value.trim();
+      const recommendedDishes = recommendedDishesInput.value.trim();
+      const weatherTags = weatherTagsInput.value.trim();
 
       if (!name) {
         alert("请先输入饭店名。可以手动输入，也可以上传照片或拍照后识别饭店名。");
@@ -682,42 +1228,68 @@
         setStatus("正在保存到云端...");
         const existing = restaurants.find(item => item.name === name);
 
+        let newPhotoUrl = "";
+        let newMenuPhotoUrl = "";
+
+        if (currentPhotoFile) {
+          setStatus("正在上传饭店照片...");
+          newPhotoUrl = await uploadPhotoFile(currentPhotoFile, "restaurant");
+        }
+
+        if (currentMenuPhotoFile) {
+          setStatus("正在上传菜单照片...");
+          newMenuPhotoUrl = await uploadPhotoFile(currentMenuPhotoFile, "menu");
+        }
+
         if (existing) {
-          if (!currentPhotoFile) {
-            alert("这家饭店已经保存过了。可以换一个名字，或者上传照片后更新。 ");
-            setStatus("饭店已存在，没有新的照片需要更新。");
+          const updateData = {};
+
+          if (newPhotoUrl) updateData.photo_url = newPhotoUrl;
+          if (newMenuPhotoUrl) updateData.menu_photo_url = newMenuPhotoUrl;
+          if (recommendedDishes) updateData.recommended_dishes = recommendedDishes;
+          if (weatherTags) updateData.weather_tags = weatherTags;
+
+          if (Object.keys(updateData).length === 0) {
+            alert("这家饭店已经存在。如果要更新，请上传新照片、菜单照片、填写推荐菜或天气标签。 ");
+            setStatus("饭店已存在，没有新的内容需要更新。 ");
             return;
           }
 
-          const shouldUpdate = confirm("这家饭店已经存在。是否用当前照片更新它？");
+          const shouldUpdate = confirm("这家饭店已经存在。是否更新它的信息？");
           if (!shouldUpdate) {
+            if (newPhotoUrl) await safeDeletePhoto(newPhotoUrl);
+            if (newMenuPhotoUrl) await safeDeletePhoto(newMenuPhotoUrl);
             setStatus("已取消更新。 ");
             return;
           }
 
-          setStatus("正在上传照片...");
-          const photoUrl = await uploadPhotoIfNeeded(name);
+          const oldPhotoUrl = existing.photo_url;
+          const oldMenuPhotoUrl = existing.menu_photo_url;
 
           const { error } = await supabaseClient
             .from("restaurants")
-            .update({ photo_url: photoUrl })
+            .update(updateData)
             .eq("id", existing.id);
 
           if (error) throw error;
-          alert("已更新这家饭店的照片。刷新后所有同学都能看到。 ");
-        } else {
-          let photoUrl = "";
-          if (currentPhotoFile) {
-            setStatus("正在上传照片...");
-            photoUrl = await uploadPhotoIfNeeded(name);
-          }
 
+          if (newPhotoUrl && oldPhotoUrl) await safeDeletePhoto(oldPhotoUrl);
+          if (newMenuPhotoUrl && oldMenuPhotoUrl) await safeDeletePhoto(oldMenuPhotoUrl);
+
+          alert("饭店信息已更新。刷新后所有同学都能看到。 ");
+        } else {
           const { error } = await supabaseClient
             .from("restaurants")
-            .insert([{ name, photo_url: photoUrl || null }]);
+            .insert([{
+              name,
+              photo_url: newPhotoUrl || null,
+              menu_photo_url: newMenuPhotoUrl || null,
+              recommended_dishes: recommendedDishes || null,
+              weather_tags: weatherTags || null
+            }]);
 
           if (error) throw error;
-          alert(photoUrl ? "饭店和照片已保存到云端！" : "饭店已保存到云端，暂时没有照片。 ");
+          alert("饭店已保存到云端！");
         }
 
         resetAddForm();
@@ -725,18 +1297,25 @@
         setStatus("保存成功。其他同学刷新网页后也能看到。 ");
       } catch (error) {
         console.error(error);
-        setStatus("保存失败。常见原因：图片太大、Storage 权限没开、restaurant-photos 桶不存在。错误：" + error.message);
+        setStatus("保存失败。请检查 restaurants 表是否已经添加 menu_photo_url、recommended_dishes、weather_tags 字段。错误：" + error.message);
         alert("保存失败：" + error.message);
       }
     }
 
     function resetAddForm() {
       restaurantNameInput.value = "";
+      recommendedDishesInput.value = "";
+      weatherTagsInput.value = "";
       photoInput.value = "";
+      menuPhotoInput.value = "";
       previewImage.style.display = "none";
       previewImage.src = "";
+      menuPreviewImage.style.display = "none";
+      menuPreviewImage.src = "";
       currentPhotoBase64 = "";
       currentPhotoFile = null;
+      currentMenuPhotoBase64 = "";
+      currentMenuPhotoFile = null;
       ocrStatus.innerText = "";
       closeCamera();
     }
@@ -747,7 +1326,16 @@
       previewImage.src = "";
       currentPhotoBase64 = "";
       currentPhotoFile = null;
-      ocrStatus.innerText = "已清除当前照片。你仍然可以只输入饭店名并保存。";
+      ocrStatus.innerText = "已清除当前饭店照片。你仍然可以只输入饭店名并保存。";
+    }
+
+    function clearMenuPhoto() {
+      menuPhotoInput.value = "";
+      menuPreviewImage.style.display = "none";
+      menuPreviewImage.src = "";
+      currentMenuPhotoBase64 = "";
+      currentMenuPhotoFile = null;
+      setStatus("已清除当前菜单照片。 ");
     }
 
     async function loadRestaurants() {
@@ -755,33 +1343,55 @@
         setStatus("正在从云端读取饭店库...");
         const { data, error } = await supabaseClient
           .from("restaurants")
-          .select("id, name, photo_url, created_at")
+          .select("id, name, photo_url, menu_photo_url, recommended_dishes, weather_tags, created_at")
           .order("created_at", { ascending: false });
 
         if (error) throw error;
         restaurants = data || [];
         renderRestaurants();
+        updateQuickStats();
         setStatus("饭店库已刷新。当前共有 " + restaurants.length + " 家饭店。");
       } catch (error) {
         console.error(error);
-        restaurantList.innerHTML = "<div class='empty'>读取饭店库失败。请检查 Supabase URL、anon key 和 RLS 权限。</div>";
+        restaurantList.innerHTML = "<div class='empty'>读取饭店库失败。请检查 Supabase 表字段是否已更新。</div>";
         setStatus("读取饭店库失败：" + error.message);
       }
     }
 
+    function normalizeText(value) {
+      return String(value || "").toLowerCase().trim();
+    }
+
     function renderRestaurants() {
       if (restaurants.length === 0) {
-        restaurantList.innerHTML = "<div class='empty'>还没有保存任何饭店。你可以先只输入饭店名保存一个。</div>";
+        restaurantList.innerHTML = "<div class='empty'>还没有保存任何饭店。你可以先只输入饭店名保存一个，或者使用上面的批量导入。</div>";
         return;
       }
 
-      restaurantList.innerHTML = restaurants.map(item => `
-        <div class="restaurant-item" onclick="showRestaurantPhoto('${item.id}')">
+      const keyword = normalizeText(restaurantSearchInput.value);
+      const filtered = restaurants.filter(item => {
+        if (!keyword) return true;
+        const combined = [item.name, item.recommended_dishes, item.weather_tags].map(normalizeText).join(" ");
+        return combined.includes(keyword);
+      });
+
+      if (filtered.length === 0) {
+        restaurantList.innerHTML = "<div class='empty'>没有搜索到匹配的饭店。</div>";
+        return;
+      }
+
+      restaurantList.innerHTML = filtered.map(item => `
+        <div class="restaurant-item" onclick="showRestaurantDetail('${item.id}')">
           ${item.photo_url
             ? `<img src="${item.photo_url}" alt="${escapeHtml(item.name)}">`
             : `<div class="no-photo"><div class="icon">🍽️</div><div>暂无照片</div></div>`
           }
           <div class="restaurant-name">${escapeHtml(item.name)}</div>
+          <div class="restaurant-meta">
+            ${item.menu_photo_url ? `<span class="badge">有菜单</span>` : ""}
+            ${item.recommended_dishes ? `<span class="badge">有推荐菜</span>` : ""}
+            ${item.weather_tags ? `<span class="badge">天气标签</span>` : ""}
+          </div>
           <div class="restaurant-actions">
             <button class="btn-danger" onclick="deleteRestaurant(event, '${item.id}')">删除</button>
           </div>
@@ -789,18 +1399,177 @@
       `).join("");
     }
 
-    function showRestaurantPhoto(id) {
+    function parseBulkImportText(rawText) {
+      const map = new Map();
+      const normalizedText = rawText.replaceAll(String.fromCharCode(13), "");
+      const lines = normalizedText.split(String.fromCharCode(10));
+
+      lines.forEach(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return;
+
+        const parts = trimmed.split(/[|｜]/);
+        const name = (parts[0] || "").trim();
+        const dishes = (parts[1] || "").trim();
+        const tags = parts.slice(2).join("|").trim();
+
+        if (!name) return;
+
+        if (!map.has(name)) {
+          map.set(name, { name, recommended_dishes: dishes, weather_tags: tags });
+        } else if (dishes) {
+          map.set(name, { name, recommended_dishes: dishes, weather_tags: tags });
+        }
+      });
+
+      return Array.from(map.values());
+    }
+
+    async function bulkImportRestaurants() {
+      const rawText = bulkImportText.value.trim();
+
+      if (!rawText) {
+        alert("请先粘贴饭店列表。每行一家饭店。");
+        return;
+      }
+
+      const parsedItems = parseBulkImportText(rawText);
+
+      if (parsedItems.length === 0) {
+        alert("没有识别到有效饭店名。请检查输入格式。");
+        return;
+      }
+
+      if (!confirm(`识别到 ${parsedItems.length} 家饭店，确定批量导入吗？`)) return;
+
+      try {
+        setStatus("正在读取已有饭店...");
+        await loadRestaurants();
+
+        const existingMap = new Map(restaurants.map(item => [item.name, item]));
+        const newRows = [];
+        const updateRows = [];
+        let skippedCount = 0;
+
+        parsedItems.forEach(item => {
+          const existing = existingMap.get(item.name);
+
+          if (!existing) {
+            newRows.push({
+              name: item.name,
+              recommended_dishes: item.recommended_dishes || null,
+              weather_tags: item.weather_tags || null
+            });
+            return;
+          }
+
+          const shouldUpdateDishes = item.recommended_dishes && item.recommended_dishes !== (existing.recommended_dishes || "");
+          const shouldUpdateTags = item.weather_tags && item.weather_tags !== (existing.weather_tags || "");
+
+          if (shouldUpdateDishes || shouldUpdateTags) {
+            updateRows.push({
+              id: existing.id,
+              name: item.name,
+              recommended_dishes: shouldUpdateDishes ? item.recommended_dishes : existing.recommended_dishes,
+              weather_tags: shouldUpdateTags ? item.weather_tags : existing.weather_tags
+            });
+          } else {
+            skippedCount += 1;
+          }
+        });
+
+        let insertedCount = 0;
+        let updatedCount = 0;
+
+        if (newRows.length > 0) {
+          setStatus(`正在新增 ${newRows.length} 家饭店...`);
+
+          const { error } = await supabaseClient
+            .from("restaurants")
+            .insert(newRows);
+
+          if (error) throw error;
+          insertedCount = newRows.length;
+        }
+
+        for (const row of updateRows) {
+          setStatus(`正在更新推荐菜：${row.name}`);
+
+          const { error } = await supabaseClient
+            .from("restaurants")
+            .update({ recommended_dishes: row.recommended_dishes || null, weather_tags: row.weather_tags || null })
+            .eq("id", row.id);
+
+          if (error) throw error;
+          updatedCount += 1;
+        }
+
+        bulkImportText.value = "";
+        await loadRestaurants();
+
+        const message = [
+          "批量导入完成！",
+          `新增：${insertedCount} 家`,
+          `更新推荐菜：${updatedCount} 家`,
+          `跳过重复：${skippedCount} 家`
+        ].join(String.fromCharCode(10));
+
+        alert(message);
+        setStatus(`批量导入完成：新增 ${insertedCount} 家，更新 ${updatedCount} 家，跳过 ${skippedCount} 家。`);
+      } catch (error) {
+        console.error(error);
+        alert("批量导入失败：" + error.message);
+        setStatus("批量导入失败：" + error.message);
+      }
+    }
+
+    function fillBulkImportExample() {
+      bulkImportText.value = [
+        "兰州拉面 | 牛肉拉面、炒刀削面 | 冷天推荐", 
+        "黄焖鸡米饭 | 黄焖鸡、土豆牛腩 | 有空调、雨天推荐", 
+        "麻辣烫 | 宽粉、牛肉丸、少放辣 | 热天不推荐、冷天推荐", 
+        "东北饺子馆 | 猪肉白菜饺子、锅包肉",
+        "重庆小面 | 牛肉小面、豌杂面"
+      ].join(String.fromCharCode(10));
+    }
+
+    function clearBulkImportText() {
+      bulkImportText.value = "";
+      setStatus("批量导入输入框已清空。");
+    }
+
+    function showRestaurantDetail(id) {
       const item = restaurants.find(r => r.id === id);
       if (!item) return;
 
       document.getElementById("modalTitle").innerText = item.name;
       const modalBody = document.getElementById("modalBody");
 
-      if (item.photo_url) {
-        modalBody.innerHTML = `<img src="${item.photo_url}" alt="${escapeHtml(item.name)}">`;
-      } else {
-        modalBody.innerHTML = `<div class="modal-no-photo">这家饭店目前没有保存照片。<br />可以以后再次输入同名饭店并上传照片来补充。</div>`;
-      }
+      modalBody.innerHTML = `
+        <h4>饭店照片</h4>
+        ${item.photo_url
+          ? `<img src="${item.photo_url}" alt="${escapeHtml(item.name)}饭店照片">`
+          : `<div class="modal-no-photo">这家饭店目前没有保存饭店照片。</div>`
+        }
+
+        <h4>菜单照片</h4>
+        ${item.menu_photo_url
+          ? `<img src="${item.menu_photo_url}" alt="${escapeHtml(item.name)}菜单照片">`
+          : `<div class="modal-no-photo">这家饭店目前没有保存菜单照片。</div>`
+        }
+
+        <h4>推荐菜 / 备注</h4>
+        ${item.recommended_dishes
+          ? `<div class="dish-box">${escapeHtml(item.recommended_dishes)}</div>`
+          : `<div class="modal-no-photo">暂无推荐菜。可以再次输入同名饭店并填写推荐菜来补充。</div>`
+        }
+
+        <h4>天气标签</h4>
+        ${item.weather_tags
+          ? `<div class="dish-box">${escapeHtml(item.weather_tags)}</div>`
+          : `<div class="modal-no-photo">暂无天气标签。建议填写：热天推荐、热天不推荐、冷天推荐、雨天推荐、有空调、距离近、清淡等。</div>`
+        }
+      `;
 
       document.getElementById("photoModal").style.display = "flex";
     }
@@ -820,9 +1589,14 @@
       const item = restaurants.find(r => r.id === id);
       if (!item) return;
 
-      if (!confirm(`确定删除“${item.name}”吗？所有同学都会看不到这家饭店。`)) return;
+      if (!confirm(`确定删除“${item.name}”吗？这会同时删除数据库记录、饭店照片和菜单照片。`)) return;
 
       try {
+        setStatus("正在删除饭店...");
+
+        const oldPhotoUrl = item.photo_url;
+        const oldMenuPhotoUrl = item.menu_photo_url;
+
         const { error } = await supabaseClient
           .from("restaurants")
           .delete()
@@ -830,19 +1604,113 @@
 
         if (error) throw error;
 
+        if (oldPhotoUrl) await safeDeletePhoto(oldPhotoUrl);
+        if (oldMenuPhotoUrl) await safeDeletePhoto(oldMenuPhotoUrl);
+
         if (currentPick && currentPick.id === id) {
           currentPick = null;
           resultName.innerText = "还没有推荐结果";
           resultPhoto.style.display = "none";
           resultPhoto.src = "";
+          resultDishes.style.display = "none";
+          resultDishes.innerText = "";
+          resultReason.style.display = "none";
+          resultReason.innerText = "";
         }
 
         await loadRestaurants();
-        setStatus("已删除饭店。其他同学刷新后也会同步变化。");
+        setStatus("已删除饭店，并已尝试删除对应照片和菜单照片。 ");
       } catch (error) {
         console.error(error);
         alert("删除失败：" + error.message);
+        setStatus("删除失败：" + error.message);
       }
+    }
+
+    function getRecentRestaurantNames(limit = 3) {
+      return historyData.slice(0, limit).map(item => item.restaurant_name);
+    }
+
+    function hasTag(item, tag) {
+      return String(item.weather_tags || "").includes(tag);
+    }
+
+    function getRestaurantWeight(item) {
+      let weight = 10;
+      const reasons = [];
+      const recentNames = getRecentRestaurantNames(3);
+      const lastName = recentNames[0];
+
+      if (item.name === lastName) {
+        weight -= 8;
+        reasons.push("上次刚吃过，已大幅降权");
+      } else if (recentNames.includes(item.name)) {
+        weight -= 4;
+        reasons.push("最近吃过，已适当降权");
+      } else {
+        weight += 2;
+        reasons.push("最近几次没有吃过");
+      }
+
+      if (item.recommended_dishes) {
+        weight += 1;
+        reasons.push("有推荐菜备注");
+      }
+
+      if (currentWeather.isHot) {
+        if (hasTag(item, "热天不推荐")) {
+          weight -= 5;
+          reasons.push("广州今天较热，该店标记为热天不推荐");
+        }
+        if (hasTag(item, "热天推荐") || hasTag(item, "有空调") || hasTag(item, "清淡")) {
+          weight += 4;
+          reasons.push("广州今天较热，该店更适合热天");
+        }
+      }
+
+      if (currentWeather.isCold) {
+        if (hasTag(item, "冷天推荐") || hasTag(item, "热汤") || hasTag(item, "火锅")) {
+          weight += 4;
+          reasons.push("天气偏冷，该店更适合冷天");
+        }
+      }
+
+      if (currentWeather.rainRisk) {
+        if (hasTag(item, "雨天推荐") || hasTag(item, "距离近")) {
+          weight += 4;
+          reasons.push("今天有降雨可能，该店更适合雨天");
+        }
+      }
+
+      weight = Math.max(1, weight);
+      return { weight, reasons };
+    }
+
+    function weightedPick(items) {
+      const scored = items.map(item => ({ item, ...getRestaurantWeight(item) }));
+      const total = scored.reduce((sum, row) => sum + row.weight, 0);
+      let random = Math.random() * total;
+
+      for (const row of scored) {
+        random -= row.weight;
+        if (random <= 0) return row;
+      }
+
+      return scored[scored.length - 1];
+    }
+
+    function getWeightedCandidates(count) {
+      const pool = [...restaurants];
+      const selected = [];
+
+      while (pool.length && selected.length < count) {
+        const picked = weightedPick(pool);
+        selected.push(picked.item);
+        const index = pool.findIndex(item => item.id === picked.item.id);
+        if (index !== -1) pool.splice(index, 1);
+      }
+
+      return selected;
     }
 
     function pickRestaurant() {
@@ -851,8 +1719,8 @@
         return;
       }
 
-      const randomIndex = Math.floor(Math.random() * restaurants.length);
-      currentPick = restaurants[randomIndex];
+      const picked = weightedPick(restaurants);
+      currentPick = picked.item;
       resultName.innerText = currentPick.name;
 
       if (currentPick.photo_url) {
@@ -862,6 +1730,23 @@
         resultPhoto.style.display = "none";
         resultPhoto.src = "";
       }
+
+      if (currentPick.recommended_dishes) {
+        resultDishes.innerText = "推荐菜 / 备注：" + String.fromCharCode(10) + currentPick.recommended_dishes;
+        resultDishes.style.display = "block";
+      } else {
+        resultDishes.innerText = "";
+        resultDishes.style.display = "none";
+      }
+
+      const weightInfo = getRestaurantWeight(currentPick);
+      const reasonLines = [
+        "推荐理由：",
+        ...weightInfo.reasons.map(reason => "- " + reason),
+        "综合权重：" + weightInfo.weight
+      ];
+      resultReason.innerText = reasonLines.join(String.fromCharCode(10));
+      resultReason.style.display = "block";
     }
 
     async function confirmToday() {
@@ -877,7 +1762,8 @@
 
         if (error) throw error;
         await loadHistory();
-        alert("已记录今天吃这家！所有同学刷新后都能看到历史记录。");
+        updateTodayDecision();
+        alert("已记录今天吃这家！所有同学刷新后都能看到历史记录。 ");
       } catch (error) {
         console.error(error);
         alert("保存历史记录失败：" + error.message);
@@ -895,6 +1781,8 @@
         if (error) throw error;
         historyData = data || [];
         renderHistory();
+        updateQuickStats();
+        updateTodayDecision();
       } catch (error) {
         console.error(error);
         historyList.innerHTML = "<div class='empty'>读取历史记录失败。</div>";
@@ -918,6 +1806,40 @@
       }).join("");
     }
 
+    function updateTodayDecision() {
+      const today = getGuangzhouDateString();
+      const todays = historyData.filter(item => {
+        const itemDate = new Date(item.created_at);
+        const parts = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Shanghai",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        }).formatToParts(itemDate);
+        const y = parts.find(part => part.type === "year").value;
+        const m = parts.find(part => part.type === "month").value;
+        const d = parts.find(part => part.type === "day").value;
+        return `${y}-${m}-${d}` === today;
+      });
+
+      if (!todays.length) {
+        todayDecisionBox.innerText = "今天还没有确认最终吃哪家。";
+        return;
+      }
+
+      const latest = todays[0];
+      const restaurant = restaurants.find(item => item.name === latest.restaurant_name);
+      const time = new Date(latest.created_at).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+      const lines = [
+        `今日已决定：${latest.restaurant_name}`,
+        `确认时间：${time}`
+      ];
+      if (restaurant && restaurant.recommended_dishes) {
+        lines.push("推荐菜 / 备注：" + restaurant.recommended_dishes);
+      }
+      todayDecisionBox.innerText = lines.join(String.fromCharCode(10));
+    }
+
     async function clearHistory() {
       if (!confirm("确定清空所有历史记录吗？所有同学都会看不到这些历史记录。")) return;
 
@@ -929,47 +1851,83 @@
 
         if (error) throw error;
         await loadHistory();
-        alert("历史记录已清空。");
+        alert("历史记录已清空。 ");
       } catch (error) {
         console.error(error);
         alert("清空失败：" + error.message);
       }
     }
 
-    async function clearAllRestaurants() {
-      if (!restaurants.length) return;
-      if (!confirm("确定清空所有饭店吗？所有同学都会看不到这些饭店。这个操作不会清空历史记录。")) return;
+    async function cleanupUnusedPhotos() {
+      if (!confirm("这个功能会删除 Storage 中没有被任何饭店记录使用的照片，包括旧饭店照片和旧菜单照片。确定开始扫描并清理吗？")) return;
 
       try {
-        const { error } = await supabaseClient
-          .from("restaurants")
-          .delete()
-          .not("id", "is", null);
+        setStatus("正在扫描数据库和 Storage，请稍等...");
 
-        if (error) throw error;
-        currentPick = null;
-        resultName.innerText = "还没有推荐结果";
-        resultPhoto.style.display = "none";
-        resultPhoto.src = "";
-        await loadRestaurants();
-        alert("所有饭店已清空。");
+        const { data: restaurantRows, error: dbError } = await supabaseClient
+          .from("restaurants")
+          .select("photo_url, menu_photo_url");
+
+        if (dbError) throw dbError;
+
+        const usedPaths = new Set();
+        (restaurantRows || []).forEach(row => {
+          const photoPath = getStoragePathFromPublicUrl(row.photo_url);
+          const menuPath = getStoragePathFromPublicUrl(row.menu_photo_url);
+          if (photoPath) usedPaths.add(photoPath);
+          if (menuPath) usedPaths.add(menuPath);
+        });
+
+        let allFiles = [];
+        let offset = 0;
+        const limit = 100;
+
+        while (true) {
+          const { data, error } = await supabaseClient.storage
+            .from(PHOTO_BUCKET)
+            .list("", {
+              limit,
+              offset,
+              sortBy: { column: "name", order: "asc" }
+            });
+
+          if (error) throw error;
+          if (!data || data.length === 0) break;
+
+          allFiles = allFiles.concat(data.filter(file => file.name));
+
+          if (data.length < limit) break;
+          offset += limit;
+        }
+
+        const unusedPaths = allFiles
+          .map(file => file.name)
+          .filter(name => !usedPaths.has(name));
+
+        if (unusedPaths.length === 0) {
+          alert("没有发现无用照片。Storage 里的图片都还被饭店记录使用。 ");
+          setStatus("清理完成：没有发现无用照片。 ");
+          return;
+        }
+
+        if (!confirm(`发现 ${unusedPaths.length} 张无用图片，确定删除吗？`)) {
+          setStatus("已取消清理。 ");
+          return;
+        }
+
+        const { error: removeError } = await supabaseClient.storage
+          .from(PHOTO_BUCKET)
+          .remove(unusedPaths);
+
+        if (removeError) throw removeError;
+
+        alert(`已清理 ${unusedPaths.length} 张无用图片。`);
+        setStatus(`清理完成：已删除 ${unusedPaths.length} 张无用图片。`);
       } catch (error) {
         console.error(error);
-        alert("清空失败：" + error.message);
+        alert("清理失败：" + error.message);
+        setStatus("清理失败：" + error.message);
       }
-    }
-
-    function dataURLToFile(dataUrl, filename) {
-      const arr = dataUrl.split(",");
-      const mimeMatch = arr[0].match(/:(.*?);/);
-      const mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
-      const bstr = atob(arr[1]);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new File([u8arr], filename, { type: mime });
     }
 
     function escapeHtml(value) {
@@ -981,16 +1939,343 @@
         .replaceAll("'", "&#039;");
     }
 
-    async function init() {
-      if (SUPABASE_URL.includes("在这里填") || SUPABASE_ANON_KEY.includes("在这里填")) {
-        restaurantList.innerHTML = "<div class='empty'>请先在代码里填写 Supabase URL 和 anon public key。</div>";
-        historyList.innerHTML = "<div class='empty'>填写 Supabase 信息后再刷新页面。</div>";
-        setStatus("还没有配置 Supabase URL 和 anon key。请先按照下一步填写。 ");
+    function getGuangzhouDateString() {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Shanghai",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(new Date());
+
+      const year = parts.find(part => part.type === "year").value;
+      const month = parts.find(part => part.type === "month").value;
+      const day = parts.find(part => part.type === "day").value;
+      return `${year}-${month}-${day}`;
+    }
+
+    function getVoterId() {
+      const key = "labmeal_voter_id";
+      let voterId = localStorage.getItem(key);
+      if (!voterId) {
+        voterId = "voter-" + Math.random().toString(36).slice(2) + "-" + Date.now();
+        localStorage.setItem(key, voterId);
+      }
+      return voterId;
+    }
+
+    function weatherCodeToText(code) {
+      const map = {
+        0: "晴朗",
+        1: "大致晴朗",
+        2: "局部多云",
+        3: "阴天",
+        45: "有雾",
+        48: "雾凇",
+        51: "小毛毛雨",
+        53: "中等毛毛雨",
+        55: "较强毛毛雨",
+        61: "小雨",
+        63: "中雨",
+        65: "大雨",
+        80: "阵雨",
+        81: "较强阵雨",
+        82: "强阵雨",
+        95: "雷雨"
+      };
+      return map[code] || "天气变化中";
+    }
+
+    async function loadGuangzhouWeather() {
+      try {
+        weatherContent.innerText = "正在读取广州天气...";
+        weatherAdvice.innerText = "天气建议加载中...";
+
+        const url = "https://api.open-meteo.com/v1/forecast?latitude=23.1291&longitude=113.2644&current=temperature_2m,precipitation,rain,weather_code&daily=precipitation_probability_max&timezone=Asia%2FShanghai";
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("天气接口请求失败");
+
+        const data = await response.json();
+        const current = data.current || {};
+        const temp = Number(current.temperature_2m);
+        const precipitation = Number(current.precipitation || 0);
+        const rain = Number(current.rain || 0);
+        const code = Number(current.weather_code);
+        const probability = data.daily && data.daily.precipitation_probability_max ? Number(data.daily.precipitation_probability_max[0] || 0) : 0;
+        const weatherText = weatherCodeToText(code);
+        currentWeather = {
+          temp,
+          rainRisk: precipitation > 0 || rain > 0 || probability >= 50,
+          isHot: Number.isFinite(temp) && temp >= 30,
+          isCold: Number.isFinite(temp) && temp <= 12,
+          description: weatherText
+        };
+
+        weatherContent.innerHTML = `
+          <span class="weather-temp">${Number.isFinite(temp) ? temp.toFixed(1) : "--"}°C</span>
+          <span>${weatherText}｜降雨概率 ${probability}%</span>
+        `;
+
+        const advices = [];
+        if (Number.isFinite(temp) && temp >= 30) {
+          advices.push("今天广州比较热，不太建议吃火锅、热汤、麻辣烫这类很烫或很辣的；更适合清淡、有空调、距离近的饭店。");
+        } else if (Number.isFinite(temp) && temp <= 12) {
+          advices.push("今天偏冷，可以优先考虑热汤、面食、火锅、砂锅这类热乎的饭店。");
+        } else {
+          advices.push("今天温度相对适中，正常随机即可。可以结合大家口味和最近是否吃腻来决定。");
+        }
+
+        if (precipitation > 0 || rain > 0 || probability >= 50) {
+          advices.push("今天有降雨可能，建议优先考虑近一点、少排队、容易到达的饭店。 ");
+        }
+
+        weatherAdvice.innerText = advices.join(" ");
+      } catch (error) {
+        console.error(error);
+        weatherContent.innerText = "广州天气读取失败";
+        weatherAdvice.innerText = "天气接口暂时不可用，不影响随机推荐和投票功能。";
+      }
+    }
+
+    function getRandomCandidates(count) {
+      return getWeightedCandidates(count);
+    }
+
+    async function setManualVoteCandidates() {
+      const raw = manualCandidateText.value.trim();
+      if (!raw) {
+        alert("请先输入候选饭店名，每行一个。 ");
         return;
       }
 
+      const names = raw
+        .replaceAll(String.fromCharCode(13), "")
+        .split(String.fromCharCode(10))
+        .map(name => name.trim())
+        .filter(Boolean);
+
+      const uniqueNames = Array.from(new Set(names));
+      const candidates = uniqueNames.map(name => restaurants.find(item => item.name === name)).filter(Boolean);
+      const missing = uniqueNames.filter(name => !restaurants.some(item => item.name === name));
+
+      if (candidates.length === 0) {
+        alert("没有找到匹配的饭店。请确认饭店名已经存在于饭店库中。 ");
+        return;
+      }
+
+      let confirmText = `找到 ${candidates.length} 家候选饭店。`;
+      if (missing.length) {
+        confirmText += String.fromCharCode(10) + "未找到：" + missing.join("、");
+      }
+      confirmText += String.fromCharCode(10) + "确定使用这些饭店作为今日候选并清空今日已有投票吗？";
+
+      if (!confirm(confirmText)) return;
+
+      await saveVoteCandidates(candidates);
+      manualCandidateText.value = "";
+    }
+
+    async function startVoteCandidates() {
+      if (restaurants.length < 2) {
+        alert("饭店数量太少，至少先保存 2 家饭店再投票。 ");
+        return;
+      }
+
+      const today = getGuangzhouDateString();
+      const candidates = getRandomCandidates(3);
+
+      if (!confirm(`将生成 ${candidates.length} 个今日投票候选，并清空今天已有投票。确定继续吗？`)) return;
+
+      try {
+        await saveVoteCandidates(candidates);
+        voteStatus.innerText = "今日候选已生成。把页面链接发给同学，让大家投票即可。";
+      } catch (error) {
+        console.error(error);
+        alert("生成候选失败：" + error.message + "。请确认已经创建 meal_vote_candidates 和 meal_votes 两张表。 ");
+        voteStatus.innerText = "生成候选失败：" + error.message;
+      }
+    }
+
+    async function saveVoteCandidates(candidates) {
+      const today = getGuangzhouDateString();
+      voteStatus.innerText = "正在保存今日候选...";
+
+      const { error: deleteVotesError } = await supabaseClient
+        .from("meal_votes")
+        .delete()
+        .eq("vote_date", today);
+      if (deleteVotesError) throw deleteVotesError;
+
+      const { error: deleteCandidatesError } = await supabaseClient
+        .from("meal_vote_candidates")
+        .delete()
+        .eq("vote_date", today);
+      if (deleteCandidatesError) throw deleteCandidatesError;
+
+      const rows = candidates.map((item, index) => ({
+        vote_date: today,
+        restaurant_id: item.id,
+        restaurant_name: item.name,
+        photo_url: item.photo_url || null,
+        recommended_dishes: item.recommended_dishes || null,
+        position: index + 1
+      }));
+
+      const { error: insertError } = await supabaseClient
+        .from("meal_vote_candidates")
+        .insert(rows);
+      if (insertError) throw insertError;
+
+      await loadVoteCandidates();
+    }
+
+    async function loadVoteCandidates() {
+      const today = getGuangzhouDateString();
+
+      try {
+        const { data: candidates, error: candidateError } = await supabaseClient
+          .from("meal_vote_candidates")
+          .select("id, vote_date, restaurant_id, restaurant_name, photo_url, recommended_dishes, position")
+          .eq("vote_date", today)
+          .order("position", { ascending: true });
+        if (candidateError) throw candidateError;
+
+        currentVoteCandidates = candidates || [];
+
+        const { data: votes, error: voteError } = await supabaseClient
+          .from("meal_votes")
+          .select("restaurant_id, restaurant_name, voter_id")
+          .eq("vote_date", today);
+        if (voteError) throw voteError;
+
+        renderVoteCandidates(currentVoteCandidates, votes || []);
+      } catch (error) {
+        console.error(error);
+        voteCandidatesList.innerHTML = "<div class='empty'>读取投票失败。请确认 Supabase 已创建投票相关表。</div>";
+        voteSummary.innerText = "投票功能暂不可用：" + error.message;
+      }
+    }
+
+    function renderVoteCandidates(candidates, votes) {
+      if (!candidates.length) {
+        voteCandidatesList.innerHTML = "";
+        voteSummary.innerText = "还没有生成今日候选。点击“生成今日候选”即可开始投票。";
+        quickVoteState.innerText = "未开";
+        return;
+      }
+
+      const countMap = new Map();
+      votes.forEach(vote => {
+        countMap.set(vote.restaurant_id, (countMap.get(vote.restaurant_id) || 0) + 1);
+      });
+
+      const voterId = getVoterId();
+      const myVote = votes.find(vote => vote.voter_id === voterId);
+
+      voteCandidatesList.innerHTML = candidates.map(item => {
+        const count = countMap.get(item.restaurant_id) || 0;
+        const selectedText = myVote && myVote.restaurant_id === item.restaurant_id ? "已投" : "投它一票";
+        return `
+          <div class="vote-card">
+            ${item.photo_url
+              ? `<img src="${item.photo_url}" alt="${escapeHtml(item.restaurant_name)}">`
+              : `<div class="no-photo"><div class="icon">🍽️</div><div>暂无照片</div></div>`
+            }
+            <div class="vote-body">
+              <div class="vote-name">${escapeHtml(item.restaurant_name)}</div>
+              <div class="vote-count">${count} 票</div>
+              ${item.recommended_dishes ? `<div class="note">${escapeHtml(item.recommended_dishes)}</div>` : ""}
+              <button class="btn-primary" onclick="voteForRestaurant('${item.restaurant_id}')">${selectedText}</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      const totalVotes = votes.length;
+      let winnerText = "暂无最高票。";
+      if (totalVotes > 0) {
+        const sorted = [...candidates].sort((a, b) => (countMap.get(b.restaurant_id) || 0) - (countMap.get(a.restaurant_id) || 0));
+        const winner = sorted[0];
+        const winnerCount = countMap.get(winner.restaurant_id) || 0;
+        winnerText = `当前最高票：${winner.restaurant_name}（${winnerCount} 票）`;
+      }
+
+      voteSummary.innerText = `今日总票数：${totalVotes}。${winnerText}`;
+      quickVoteState.innerText = String(totalVotes);
+    }
+
+    function updateQuickStats() {
+      quickRestaurantCount.innerText = String(restaurants.length || 0);
+      quickHistoryCount.innerText = String(historyData.length || 0);
+    }
+
+    async function refreshAllData() {
+      await loadGuangzhouWeather();
       await loadRestaurants();
       await loadHistory();
+      await loadVoteCandidates();
+      updateTodayDecision();
+    }
+
+    async function voteForRestaurant(restaurantId) {
+      const today = getGuangzhouDateString();
+      const voterId = getVoterId();
+      const candidate = currentVoteCandidates.find(item => item.restaurant_id === restaurantId);
+      const restaurantName = candidate ? candidate.restaurant_name : "未知饭店";
+
+      try {
+        voteStatus.innerText = "正在提交投票...";
+        const { error } = await supabaseClient
+          .from("meal_votes")
+          .upsert([{
+            vote_date: today,
+            voter_id: voterId,
+            restaurant_id: restaurantId,
+            restaurant_name: restaurantName,
+            created_at: new Date().toISOString()
+          }], { onConflict: "vote_date,voter_id" });
+
+        if (error) throw error;
+        await loadVoteCandidates();
+        voteStatus.innerText = "投票成功。你当天再次投票会覆盖原来的选择。";
+      } catch (error) {
+        console.error(error);
+        alert("投票失败：" + error.message);
+        voteStatus.innerText = "投票失败：" + error.message;
+      }
+    }
+
+    async function clearTodayVotes() {
+      const today = getGuangzhouDateString();
+      if (!confirm("确定清空今天的候选和投票吗？所有同学都会看到变化。")) return;
+
+      try {
+        const { error: voteError } = await supabaseClient
+          .from("meal_votes")
+          .delete()
+          .eq("vote_date", today);
+        if (voteError) throw voteError;
+
+        const { error: candidateError } = await supabaseClient
+          .from("meal_vote_candidates")
+          .delete()
+          .eq("vote_date", today);
+        if (candidateError) throw candidateError;
+
+        await loadVoteCandidates();
+        voteStatus.innerText = "今日投票已清空。";
+      } catch (error) {
+        console.error(error);
+        alert("清空投票失败：" + error.message);
+        voteStatus.innerText = "清空投票失败：" + error.message;
+      }
+    }
+
+    async function init() {
+      registerServiceWorker();
+      await loadGuangzhouWeather();
+      await loadRestaurants();
+      await loadHistory();
+      await loadVoteCandidates();
     }
 
     init();
