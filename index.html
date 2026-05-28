@@ -412,7 +412,6 @@
       <div class="button-row">
         <button class="btn-success" onclick="saveRestaurant()">保存饭店</button>
         <button class="btn-gray" onclick="loadRestaurants()">刷新饭店库</button>
-        <button class="btn-danger" onclick="clearAllRestaurants()">清空所有饭店</button>
       </div>
       <div id="globalStatus" class="status"></div>
     </div>
@@ -451,8 +450,8 @@
 
   <script>
     // 第一步：把下面两个值替换成你自己的 Supabase 信息。
-    const SUPABASE_URL = "https://ebtwvggzahdfzncccppo.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_MqlVMgJABhdIkDJUhWwIIw_9oc2JLRC";
+    const SUPABASE_URL = "在这里填你的 Project URL";
+    const SUPABASE_ANON_KEY = "在这里填你的 anon public key";
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const PHOTO_BUCKET = "restaurant-photos";
@@ -477,19 +476,23 @@
     const cameraVideo = document.getElementById("cameraVideo");
     const captureCanvas = document.getElementById("captureCanvas");
 
-    photoInput.addEventListener("change", function() {
+    photoInput.addEventListener("change", async function() {
       const file = this.files[0];
       if (!file) return;
 
-      currentPhotoFile = file;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        currentPhotoBase64 = e.target.result;
+      try {
+        setStatus("正在处理图片，请稍等...");
+        currentPhotoFile = await compressImageFile(file);
+        currentPhotoBase64 = await fileToDataURL(currentPhotoFile);
         previewImage.src = currentPhotoBase64;
         previewImage.style.display = "block";
-        ocrStatus.innerText = "图片已选择。你可以点击“从当前照片识别饭店名”，也可以直接手动输入饭店名后保存。";
-      };
-      reader.readAsDataURL(file);
+        ocrStatus.innerText = "图片已选择并压缩。你可以点击“从当前照片识别饭店名”，也可以直接手动输入饭店名后保存。";
+        setStatus("图片处理完成，保存时会上传压缩后的照片。");
+      } catch (error) {
+        console.error(error);
+        alert("图片处理失败：" + error.message);
+        setStatus("图片处理失败。可以换一张照片再试。 ");
+      }
     });
 
     function setStatus(message) {
@@ -517,26 +520,37 @@
       }
     }
 
-    function capturePhoto() {
+    async function capturePhoto() {
       if (!cameraStream) {
         alert("请先打开摄像头。");
         return;
       }
 
-      const width = cameraVideo.videoWidth || 1280;
-      const height = cameraVideo.videoHeight || 720;
-      captureCanvas.width = width;
-      captureCanvas.height = height;
+      try {
+        const width = cameraVideo.videoWidth || 1280;
+        const height = cameraVideo.videoHeight || 720;
+        const maxWidth = 1280;
+        const ratio = width > maxWidth ? maxWidth / width : 1;
+        const targetWidth = Math.round(width * ratio);
+        const targetHeight = Math.round(height * ratio);
 
-      const context = captureCanvas.getContext("2d");
-      context.drawImage(cameraVideo, 0, 0, width, height);
+        captureCanvas.width = targetWidth;
+        captureCanvas.height = targetHeight;
 
-      currentPhotoBase64 = captureCanvas.toDataURL("image/jpeg", 0.86);
-      currentPhotoFile = dataURLToFile(currentPhotoBase64, `camera-${Date.now()}.jpg`);
-      previewImage.src = currentPhotoBase64;
-      previewImage.style.display = "block";
-      photoInput.value = "";
-      ocrStatus.innerText = "拍照完成。你可以点击“从当前照片识别饭店名”，也可以直接保存这张照片。";
+        const context = captureCanvas.getContext("2d");
+        context.drawImage(cameraVideo, 0, 0, targetWidth, targetHeight);
+
+        currentPhotoFile = await canvasToJpegFile(captureCanvas, `camera-${Date.now()}.jpg`, 0.78);
+        currentPhotoBase64 = await fileToDataURL(currentPhotoFile);
+        previewImage.src = currentPhotoBase64;
+        previewImage.style.display = "block";
+        photoInput.value = "";
+        ocrStatus.innerText = "拍照完成，照片已自动压缩。你可以点击“从当前照片识别饭店名”，也可以直接保存这张照片。";
+        setStatus("拍照完成。保存时会上传压缩后的照片。 ");
+      } catch (error) {
+        console.error(error);
+        alert("拍照处理失败：" + error.message);
+      }
     }
 
     function closeCamera() {
@@ -579,18 +593,70 @@
       }
     }
 
+    function fileToDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("读取图片失败"));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadImageFromDataURL(dataUrl) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("图片加载失败"));
+        img.src = dataUrl;
+      });
+    }
+
+    function canvasToJpegFile(canvas, filename, quality) {
+      return new Promise((resolve, reject) => {
+        canvas.toBlob(blob => {
+          if (!blob) {
+            reject(new Error("图片压缩失败"));
+            return;
+          }
+          resolve(new File([blob], filename, { type: "image/jpeg" }));
+        }, "image/jpeg", quality);
+      });
+    }
+
+    async function compressImageFile(file) {
+      if (!file.type || !file.type.startsWith("image/")) {
+        throw new Error("请选择图片文件");
+      }
+
+      const dataUrl = await fileToDataURL(file);
+      const img = await loadImageFromDataURL(dataUrl);
+
+      const maxWidth = 1280;
+      const ratio = img.width > maxWidth ? maxWidth / img.width : 1;
+      const targetWidth = Math.round(img.width * ratio);
+      const targetHeight = Math.round(img.height * ratio);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const context = canvas.getContext("2d");
+      context.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+      return await canvasToJpegFile(canvas, `photo-${Date.now()}.jpg`, 0.78);
+    }
+
     async function uploadPhotoIfNeeded(name) {
       if (!currentPhotoFile) return "";
 
-      const safeName = name.replace(/[^a-zA-Z0-9一-龥]/g, "_");
-      const fileExt = currentPhotoFile.name.split(".").pop() || "jpg";
-      const filePath = `${Date.now()}-${safeName}.${fileExt}`;
+      const randomPart = Math.random().toString(36).slice(2);
+      const filePath = `restaurant-${Date.now()}-${randomPart}.jpg`;
 
       const { error: uploadError } = await supabaseClient.storage
         .from(PHOTO_BUCKET)
         .upload(filePath, currentPhotoFile, {
           cacheControl: "3600",
-          upsert: false
+          upsert: false,
+          contentType: "image/jpeg"
         });
 
       if (uploadError) {
@@ -615,41 +681,51 @@
       try {
         setStatus("正在保存到云端...");
         const existing = restaurants.find(item => item.name === name);
-        const photoUrl = await uploadPhotoIfNeeded(name);
 
         if (existing) {
-          if (photoUrl) {
-            const shouldUpdate = confirm("这家饭店已经存在。是否用当前照片更新它？");
-            if (!shouldUpdate) {
-              setStatus("已取消更新。");
-              return;
-            }
-
-            const { error } = await supabaseClient
-              .from("restaurants")
-              .update({ photo_url: photoUrl })
-              .eq("id", existing.id);
-
-            if (error) throw error;
-            alert("已更新这家饭店的照片。刷新后所有同学都能看到。");
-          } else {
-            alert("这家饭店已经保存过了。可以换一个名字，或者上传照片后更新。");
+          if (!currentPhotoFile) {
+            alert("这家饭店已经保存过了。可以换一个名字，或者上传照片后更新。 ");
+            setStatus("饭店已存在，没有新的照片需要更新。");
+            return;
           }
+
+          const shouldUpdate = confirm("这家饭店已经存在。是否用当前照片更新它？");
+          if (!shouldUpdate) {
+            setStatus("已取消更新。 ");
+            return;
+          }
+
+          setStatus("正在上传照片...");
+          const photoUrl = await uploadPhotoIfNeeded(name);
+
+          const { error } = await supabaseClient
+            .from("restaurants")
+            .update({ photo_url: photoUrl })
+            .eq("id", existing.id);
+
+          if (error) throw error;
+          alert("已更新这家饭店的照片。刷新后所有同学都能看到。 ");
         } else {
+          let photoUrl = "";
+          if (currentPhotoFile) {
+            setStatus("正在上传照片...");
+            photoUrl = await uploadPhotoIfNeeded(name);
+          }
+
           const { error } = await supabaseClient
             .from("restaurants")
             .insert([{ name, photo_url: photoUrl || null }]);
 
           if (error) throw error;
-          alert(photoUrl ? "饭店和照片已保存到云端！" : "饭店已保存到云端，暂时没有照片。");
+          alert(photoUrl ? "饭店和照片已保存到云端！" : "饭店已保存到云端，暂时没有照片。 ");
         }
 
         resetAddForm();
         await loadRestaurants();
-        setStatus("保存成功。其他同学刷新网页后也能看到。");
+        setStatus("保存成功。其他同学刷新网页后也能看到。 ");
       } catch (error) {
         console.error(error);
-        setStatus("保存失败。请检查 Supabase URL、anon key、表权限和 Storage 权限。错误：" + error.message);
+        setStatus("保存失败。常见原因：图片太大、Storage 权限没开、restaurant-photos 桶不存在。错误：" + error.message);
         alert("保存失败：" + error.message);
       }
     }
